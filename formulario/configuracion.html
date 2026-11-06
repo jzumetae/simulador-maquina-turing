@@ -1,0 +1,838 @@
+<!--PESTAÑA DEL FORMULARIO MODO 1-->
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nueva configuración · Máquina de Turing</title>
+
+    <!-- Fuentes: Libre Baskerville (textos) y JetBrains Mono (estados y símbolos) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@300;400&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- styles.css trae los colores, la decoración y las piezas comunes;
+       configuracion.css solo agrega lo propio del formulario -->
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="stylesheet" href="configuracion.css" />
+  </head>
+  <body class="pagina-config">
+    <!-- ===================== DECORACIÓN DE FONDO (igual que el menú) ===================== -->
+    <div class="decoracion" aria-hidden="true">
+      <!-- Esquina superior izquierda: triángulo, línea diagonal y línea de circuito -->
+      <svg class="deco deco--sup-izq" viewBox="0 0 300 240">
+        <defs>
+          <linearGradient id="g-esquina" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#0D2C47" />
+            <stop offset="0.6" stop-color="#1E486A" />
+            <stop offset="1" stop-color="#3E6888" />
+          </linearGradient>
+          <linearGradient id="g-circuito-izq" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#4B6E8A" stop-opacity="0" />
+            <stop offset="0.4" stop-color="#4B6E8A" />
+          </linearGradient>
+        </defs>
+        <polygon points="0,0 192,0 0,192" fill="url(#g-esquina)" />
+        <line
+          x1="222"
+          y1="0"
+          x2="0"
+          y2="224"
+          stroke="#3B6584"
+          stroke-width="1.2"
+        />
+        <path
+          d="M40 90 H238 L266 78 H277"
+          fill="none"
+          stroke="url(#g-circuito-izq)"
+          stroke-width="1.4"
+        />
+        <circle cx="240" cy="90" r="3" fill="#4B6E8A" />
+        <rect x="277" y="72" width="11" height="11" fill="#306284" />
+      </svg>
+
+      <!-- Diagrama de estados (izquierda) -->
+      <svg class="deco deco--diagrama-izq diagrama" viewBox="80 140 240 230">
+        <defs>
+          <marker
+            id="flecha"
+            viewBox="0 0 10 10"
+            refX="8"
+            refY="5"
+            markerWidth="6"
+            markerHeight="6"
+            orient="auto"
+          >
+            <path
+              d="M1.5 1.5 L8 5 L1.5 8.5"
+              fill="none"
+              stroke="#546E81"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </marker>
+        </defs>
+        <g class="diagrama__flechas">
+          <path
+            d="M184.1 200.2 C162.1 142.2 241.8 138.7 219.8 196.7"
+            marker-end="url(#flecha)"
+          />
+          <path
+            d="M164.3 241.8 Q134.1 255.3 123.9 286.3"
+            marker-end="url(#flecha)"
+          />
+          <path
+            d="M138.7 295.8 Q150.4 274.5 169.3 259.5"
+            marker-end="url(#flecha)"
+          />
+          <path
+            d="M274.9 300 Q269 265.1 240.4 246.5"
+            marker-end="url(#flecha)"
+          />
+          <path
+            d="M227.3 259.4 Q246.5 277 257.3 300.6"
+            marker-end="url(#flecha)"
+          />
+          <path
+            d="M242.7 349.7 Q197.3 362 153.8 345.8"
+            marker-end="url(#flecha)"
+          />
+          <path
+            d="M154.4 319.5 Q196.5 316.7 237.9 323.9"
+            marker-end="url(#flecha)"
+          />
+        </g>
+        <g class="diagrama__nodos">
+          <circle cx="201" cy="232" r="36" />
+          <text x="199" y="239">
+            q
+            <tspan dy="5" font-size="15">0</tspan>
+          </text>
+          <circle cx="119" cy="326" r="34" />
+          <text x="117" y="333">
+            q
+            <tspan dy="5" font-size="15">1</tspan>
+          </text>
+          <circle cx="276" cy="336" r="34" />
+          <text x="274" y="343">
+            q
+            <tspan dy="5" font-size="15">2</tspan>
+          </text>
+        </g>
+      </svg>
+
+      <!-- Esquina superior derecha: líneas de circuito -->
+      <svg class="deco deco--sup-der" viewBox="1236 0 300 120">
+        <g fill="none" stroke="#7F9CB4" stroke-width="1.3">
+          <path d="M1283 88 H1343 L1440 0" />
+          <path d="M1370 88 H1395 L1492 0" />
+        </g>
+        <rect x="1273" y="83" width="10" height="10" fill="#4E7699" />
+        <rect x="1463" y="72" width="11" height="11" fill="#628AA8" />
+      </svg>
+
+      <!-- Números binarios -->
+      <div class="deco deco--binario">
+        <span>0100110</span>
+        <span>1100101</span>
+        <span>0010110</span>
+        <span>1100100</span>
+      </div>
+
+      <!-- Esquina inferior izquierda: bandas diagonales y cinta inclinada -->
+      <svg class="deco deco--inf-izq" viewBox="0 600 780 424">
+        <defs>
+          <linearGradient id="g-banda-oscura" x1="0" y1="0" x2="1" y2="0.35">
+            <stop offset="0" stop-color="#0C2A45" />
+            <stop offset="1" stop-color="#245072" />
+          </linearGradient>
+          <linearGradient id="g-banda-media" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#2C5A7E" stop-opacity="0.95" />
+            <stop offset="0.6" stop-color="#5E87A8" stop-opacity="0.75" />
+            <stop offset="1" stop-color="#B9CBD8" stop-opacity="0" />
+          </linearGradient>
+          <linearGradient id="g-banda-clara" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#6F93B0" stop-opacity="0.3" />
+            <stop offset="1" stop-color="#6F93B0" stop-opacity="0" />
+          </linearGradient>
+          <linearGradient id="g-cinta" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.16" />
+            <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.08" />
+          </linearGradient>
+          <linearGradient
+            id="g-desvanecer"
+            gradientUnits="userSpaceOnUse"
+            x1="520"
+            y1="0"
+            x2="780"
+            y2="0"
+          >
+            <stop offset="0" stop-color="#FFFFFF" />
+            <stop offset="1" stop-color="#000000" />
+          </linearGradient>
+          <mask id="m-desvanecer">
+            <rect
+              x="0"
+              y="600"
+              width="780"
+              height="424"
+              fill="url(#g-desvanecer)"
+            />
+          </mask>
+        </defs>
+
+        <line
+          x1="0"
+          y1="660"
+          x2="170"
+          y2="822"
+          stroke="#AEBFCC"
+          stroke-width="1"
+        />
+        <polygon
+          points="0,650 520,944 150,841 0,700"
+          fill="url(#g-banda-clara)"
+        />
+        <polygon
+          points="0,700 150,841 430,1024 0,1024"
+          fill="url(#g-banda-oscura)"
+        />
+        <polygon
+          points="150,841 780,1015 780,1024 430,1024"
+          fill="url(#g-banda-media)"
+        />
+
+        <g mask="url(#m-desvanecer)">
+          <g
+            class="cinta-inclinada"
+            transform="translate(-14 797) rotate(15.4)"
+          >
+            <rect
+              class="cinta-inclinada__fondo"
+              x="0"
+              y="0"
+              width="840"
+              height="72"
+              fill="url(#g-cinta)"
+            />
+            <line x1="0" y1="3" x2="840" y2="3" />
+            <line x1="0" y1="69" x2="840" y2="69" />
+            <rect x="-40" y="11" width="48" height="50" rx="3" />
+            <rect x="18" y="11" width="48" height="50" rx="3" />
+            <rect x="76" y="11" width="48" height="50" rx="3" />
+            <rect x="134" y="11" width="48" height="50" rx="3" />
+            <rect x="192" y="11" width="48" height="50" rx="3" />
+            <rect x="250" y="11" width="48" height="50" rx="3" />
+            <rect x="308" y="11" width="48" height="50" rx="3" />
+            <rect x="366" y="11" width="48" height="50" rx="3" />
+            <rect x="424" y="11" width="48" height="50" rx="3" />
+            <rect x="482" y="11" width="48" height="50" rx="3" />
+            <rect x="540" y="11" width="48" height="50" rx="3" />
+            <rect x="598" y="11" width="48" height="50" rx="3" />
+            <rect x="656" y="11" width="48" height="50" rx="3" />
+            <rect x="714" y="11" width="48" height="50" rx="3" />
+            <rect x="772" y="11" width="48" height="50" rx="3" />
+            <text x="100" y="48">B</text>
+            <text x="158" y="48">0</text>
+            <text x="216" y="48">1</text>
+            <text x="274" y="48">0</text>
+            <text x="332" y="48">0</text>
+            <text x="390" y="48">B</text>
+          </g>
+        </g>
+      </svg>
+
+      <!-- Esquina inferior derecha: arco grande y diagrama de estados -->
+      <svg class="deco deco--inf-der diagrama" viewBox="1236 650 300 374">
+        <circle
+          cx="1575"
+          cy="1005"
+          r="320"
+          fill="none"
+          stroke="#8EA8BC"
+          stroke-width="1.2"
+        />
+        <g class="diagrama__flechas">
+          <path
+            d="M1410.5 792.9 C1388.5 738.9 1465.4 735.3 1443.4 789.3"
+            marker-end="url(#flecha)"
+          />
+          <path
+            d="M1395.1 838.5 Q1362.3 856.8 1351.4 892.1"
+            marker-end="url(#flecha)"
+          />
+          <path
+            d="M1478.1 906 Q1477.9 872.1 1454.9 848.2"
+            marker-end="url(#flecha)"
+          />
+          <path
+            d="M1446.5 927.2 Q1413.5 919.3 1379.9 920.7"
+            marker-end="url(#flecha)"
+          />
+          <path
+            d="M1444.2 943.4 Q1411.8 944.7 1379.8 939.6"
+            marker-end="url(#flecha)"
+          />
+        </g>
+        <g class="diagrama__nodos">
+          <circle cx="1426" cy="822" r="33" />
+          <text x="1424" y="829">
+            q
+            <tspan dy="5" font-size="15">0</tspan>
+          </text>
+          <circle cx="1342" cy="930" r="33" />
+          <text x="1340" y="937">
+            q
+            <tspan dy="5" font-size="15">1</tspan>
+          </text>
+          <circle cx="1478" cy="940" r="32" />
+          <text x="1476" y="947">
+            q
+            <tspan dy="5" font-size="15">2</tspan>
+          </text>
+        </g>
+      </svg>
+    </div>
+
+    <!-- ===================== CONTENIDO ===================== -->
+    <main class="menu pantalla-config">
+      <header class="encabezado">
+        <p class="encabezado__sup">
+          <span class="linea"></span>
+          <span>MODO 1: CONFIGURACION</span>
+          <span class="linea"></span>
+        </p>
+        <h1 class="titulo">Nueva configuración</h1>
+        <p class="lema lema--formal">M = (Q, Σ, Γ, δ, q<sub>0</sub>, B, F)</p>
+      </header>
+
+      <h2 class="separador"><span>Ingresa datos a la máquina</span></h2>
+
+      <form class="formulario" id="formulario" novalidate autocomplete="off">
+        <!-- ===== 01 · Estados (Q) ===== -->
+        <section
+          class="tarjeta seccion"
+          id="sec-estados"
+          data-seccion="estados"
+        >
+          <header class="seccion__cabeza">
+            <span class="seccion__num">01</span>
+            <div class="seccion__titulos">
+              <h3 class="seccion__titulo">
+                Estados <span class="seccion__marca" data-marca></span>
+              </h3>
+              <p class="seccion__ayuda">
+                Escribe el conjunto de estados separados por comas.
+              </p>
+            </div>
+            <span class="seccion__simbolo">Q</span>
+          </header>
+          <span class="seccion__divisor"></span>
+
+          <div class="campo">
+            <label class="campo__etiqueta" for="estados"
+              >Conjunto de estados</label
+            >
+            <input
+              class="entrada"
+              id="estados"
+              type="text"
+              placeholder="q0, q1, q2"
+              spellcheck="false"
+            />
+            <p class="campo__vista" id="vista-estados"></p>
+            <ul class="campo__errores" data-errores="estados"></ul>
+          </div>
+        </section>
+
+        <!-- ===== 02 · Alfabetos (Σ y Γ) ===== -->
+        <section
+          class="tarjeta seccion"
+          id="sec-alfabetos"
+          data-seccion="alfabetos"
+        >
+          <header class="seccion__cabeza">
+            <span class="seccion__num">02</span>
+            <div class="seccion__titulos">
+              <h3 class="seccion__titulo">
+                Alfabetos <span class="seccion__marca" data-marca></span>
+              </h3>
+              <p class="seccion__ayuda">
+                Cada símbolo es un solo carácter. Γ debe contener a Σ y al
+                símbolo blanco B. Los auxiliares (como X o Y) nunca están en
+                la cinta inicial: solo los escribe la máquina.
+              </p>
+            </div>
+            <span class="seccion__simbolo">Σ , Γ</span>
+          </header>
+          <span class="seccion__divisor"></span>
+
+          <div class="rejilla rejilla--alfabetos">
+            <div class="campo">
+              <label class="campo__etiqueta" for="alfabeto-entrada"
+                >Alfabeto de entrada Σ</label
+              >
+              <input
+                class="entrada"
+                id="alfabeto-entrada"
+                type="text"
+                placeholder="0, 1"
+                spellcheck="false"
+              />
+              <p class="campo__vista" id="vista-sigma"></p>
+              <ul class="campo__errores" data-errores="alfabetoEntrada"></ul>
+            </div>
+
+            <!-- El blanco siempre es B: no se edita, el botón lo agrega a Γ -->
+            <div class="campo">
+              <span class="campo__etiqueta">Símbolo blanco</span>
+              <button type="button" class="boton-blanco" id="btn-blanco">
+                <span class="boton-blanco__simbolo">B</span>
+                <span class="boton-blanco__marca" aria-hidden="true"></span>
+              </button>
+              <p class="campo__vista" id="vista-blanco"></p>
+              <ul class="campo__errores" data-errores="blanco"></ul>
+            </div>
+
+            <div class="campo campo--ancho">
+              <label class="campo__etiqueta" for="alfabeto-cinta"
+                >Alfabeto de la cinta Γ</label
+              >
+              <div class="entrada-con-boton">
+                <input
+                  class="entrada"
+                  id="alfabeto-cinta"
+                  type="text"
+                  placeholder="0, 1, X, B"
+                  spellcheck="false"
+                />
+                <button
+                  type="button"
+                  class="boton boton--mini"
+                  id="btn-completar-gamma"
+                  title="Agrega a Γ los símbolos de Σ y el blanco que falten"
+                >
+                  <svg viewBox="0 0 24 24">
+                    <path d="M5 12h14" />
+                    <path d="M12 5v14" />
+                  </svg>
+                  <span>Σ y B</span>
+                </button>
+              </div>
+              <p class="campo__vista" id="vista-gamma"></p>
+              <ul class="campo__errores" data-errores="alfabetoCinta"></ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== 03 · Estado inicial y finales ===== -->
+        <section
+          class="tarjeta seccion"
+          id="sec-inicio-fin"
+          data-seccion="inicioFin"
+        >
+          <header class="seccion__cabeza">
+            <span class="seccion__num">03</span>
+            <div class="seccion__titulos">
+              <h3 class="seccion__titulo">
+                Estado inicial y finales
+                <span class="seccion__marca" data-marca></span>
+              </h3>
+              <p class="seccion__ayuda">
+                Elige dónde inicia la máquina y en qué estado(s) acepta la
+                palabra.
+              </p>
+            </div>
+            <span class="seccion__simbolo">q<sub>0</sub> , q<sub>f</sub></span>
+          </header>
+          <span class="seccion__divisor"></span>
+
+          <div class="rejilla rejilla--mitades">
+            <div class="campo">
+              <span class="campo__etiqueta" id="etiqueta-inicial"
+                >Estado inicial <span class="tal-cual">q<sub>0</sub></span> ·
+                elige uno</span
+              >
+              <div
+                class="pildoras"
+                id="pildoras-inicial"
+                role="radiogroup"
+                aria-labelledby="etiqueta-inicial"
+              ></div>
+              <ul class="campo__errores" data-errores="estadoInicial"></ul>
+            </div>
+            <div class="campo">
+              <span class="campo__etiqueta" id="etiqueta-finales"
+                >Estados finales <span class="tal-cual">q <sub>f</sub></span> ·
+                uno o varios</span
+              >
+              <div
+                class="pildoras"
+                id="pildoras-finales"
+                role="group"
+                aria-labelledby="etiqueta-finales"
+              ></div>
+              <ul class="campo__errores" data-errores="estadosFinales"></ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== 04 · Función de transición (δ) ===== -->
+        <section
+          class="tarjeta seccion"
+          id="sec-transiciones"
+          data-seccion="transiciones"
+        >
+          <header class="seccion__cabeza">
+            <span class="seccion__num">04</span>
+            <div class="seccion__titulos">
+              <h3 class="seccion__titulo">
+                Función de transición
+                <span class="seccion__marca" data-marca></span>
+              </h3>
+              <p class="seccion__ayuda">
+                Cada fila es δ(q<sub>i</sub>, X) = (q<sub>j</sub>, Y, D): en el
+                estado q<sub>i</sub> lee X, pasa a q<sub>j</sub>, escribe Y y se
+                mueve D ∈ {R, L, S} (derecha, izquierda o quedarse).
+              </p>
+            </div>
+            <span class="seccion__simbolo">δ</span>
+          </header>
+          <span class="seccion__divisor"></span>
+
+          <div class="barra">
+            <div
+              class="pestanas"
+              role="tablist"
+              aria-label="Forma de ver las transiciones"
+            >
+              <button
+                type="button"
+                class="pestana"
+                role="tab"
+                id="pestana-lista"
+                aria-selected="true"
+                aria-controls="panel-lista"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path d="M3 5h.01" />
+                  <path d="M3 12h.01" />
+                  <path d="M3 19h.01" />
+                  <path d="M8 5h13" />
+                  <path d="M8 12h13" />
+                  <path d="M8 19h13" />
+                </svg>
+                Lista
+              </button>
+              <button
+                type="button"
+                class="pestana"
+                role="tab"
+                id="pestana-matriz"
+                aria-selected="false"
+                aria-controls="panel-matriz"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path d="M3 9h18" />
+                  <path d="M9 3v18" />
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                </svg>
+                Tabla
+              </button>
+            </div>
+            <span class="barra__conteo" id="conteo-transiciones"
+              >0 transiciones</span
+            >
+          </div>
+
+          <p class="nota" id="nota-transiciones" hidden>
+            Escribe Q (sección 01) y Γ (sección 02) para poder elegir las
+            opciones.
+          </p>
+
+          <!-- Lista de transiciones -->
+          <div
+            class="panel"
+            id="panel-lista"
+            role="tabpanel"
+            aria-labelledby="pestana-lista"
+          >
+            <div class="trans-cabeza" aria-hidden="true">
+              <span></span>
+              <div class="trans-cabeza__formula">
+                <span></span
+                ><span
+                  >estado <i>q<sub>i</sub></i></span
+                ><span></span><span>lee <i>X</i></span
+                ><span></span>
+                <span></span>
+                <span></span
+                ><span
+                  >nuevo <i>q<sub>j</sub></i></span
+                ><span></span><span>escribe <i>Y</i></span
+                ><span></span><span>mueve <i>D</i></span
+                ><span></span>
+              </div>
+              <span></span>
+            </div>
+            <div class="lista-trans" id="lista-transiciones"></div>
+            <button
+              type="button"
+              class="boton boton--fantasma boton--agregar"
+              id="btn-agregar"
+            >
+              <svg viewBox="0 0 24 24">
+                <path d="M5 12h14" />
+                <path d="M12 5v14" />
+              </svg>
+              Agregar transición
+            </button>
+          </div>
+
+          <!-- Matriz de transiciones -->
+          <div
+            class="panel"
+            id="panel-matriz"
+            role="tabpanel"
+            aria-labelledby="pestana-matriz"
+            hidden
+          >
+            <div class="matriz-marco" id="matriz"></div>
+            <p class="matriz__leyenda">
+              <span>→ estado inicial</span>
+              <span>* estado final</span>
+              <span>— sin transición: la máquina se detiene</span>
+              <span>Haz clic en una celda para editar.</span>
+            </p>
+          </div>
+
+          <ul class="campo__errores" data-errores="transiciones"></ul>
+        </section>
+
+        <!-- ===== 05 · Palabra de entrada ===== -->
+        <section
+          class="tarjeta seccion"
+          id="sec-palabra"
+          data-seccion="palabra"
+        >
+          <header class="seccion__cabeza">
+            <span class="seccion__num">05</span>
+            <div class="seccion__titulos">
+              <h3 class="seccion__titulo">
+                Palabra de entrada
+                <span class="seccion__marca" data-marca></span>
+              </h3>
+              <p class="seccion__ayuda">
+                La cadena que la máquina verifica. En la simulación, la cinta de
+                50 celdas se llena al azar con Σ y B, y la palabra se escribe
+                encima desde la celda 1 (máximo 49 símbolos), con un blanco
+                antes y otro después. Déjala vacía para la palabra vacía ε.
+              </p>
+            </div>
+            <span class="seccion__simbolo">w</span>
+          </header>
+          <span class="seccion__divisor"></span>
+
+          <div class="rejilla rejilla--palabra">
+            <div class="campo">
+              <label class="campo__etiqueta" for="palabra"
+                >Palabra <span class="tal-cual">w</span></label
+              >
+              <input
+                class="entrada"
+                id="palabra"
+                type="text"
+                placeholder="0011"
+                spellcheck="false"
+              />
+              <p class="campo__vista" id="vista-palabra"></p>
+              <ul class="campo__errores" data-errores="palabra"></ul>
+            </div>
+            <div class="campo">
+              <span class="campo__etiqueta">La palabra en la cinta · el resto va al azar</span>
+              <div class="cinta-marco">
+                <div class="cinta" id="cinta-vista" style="--pos: 1">
+                  <span class="cinta__cabezal"></span>
+                  <div class="cinta__celdas" id="celdas-vista"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== Revisar y guardar ===== -->
+        <section
+          class="tarjeta seccion seccion--guardar"
+          id="sec-guardar"
+          data-seccion="guardar"
+        >
+          <header class="seccion__cabeza">
+            <span class="seccion__num">
+              <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" /></svg>
+            </span>
+            <div class="seccion__titulos">
+              <h3 class="seccion__titulo">Revisar y guardar</h3>
+              <p class="seccion__ayuda">
+                Antes de guardar se revisa que todos los datos sean válidos.
+              </p>
+            </div>
+            <span class="seccion__simbolo">M</span>
+          </header>
+          <span class="seccion__divisor"></span>
+
+          <p class="tupla" id="tupla"></p>
+
+          <div class="campo campo--nombre">
+            <label class="campo__etiqueta" for="nombre"
+              >Nombre de la máquina (opcional)</label
+            >
+            <input
+              class="entrada"
+              id="nombre"
+              type="text"
+              placeholder="Mi máquina"
+              maxlength="60"
+            />
+            <p class="campo__vista">
+              Se guardará como
+              <span id="vista-archivo">maquina-turing.json</span>
+            </p>
+          </div>
+
+          <!-- Errores encontrados (aparece al intentar guardar) -->
+          <div
+            class="resumen resumen--error"
+            id="resumen-errores"
+            role="alert"
+            hidden
+          >
+            <p class="resumen__titulo">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" x2="12" y1="8" y2="12" />
+                <line x1="12" x2="12.01" y1="16" y2="16" />
+              </svg>
+              <span id="resumen-titulo">No se puede guardar todavía.</span>
+            </p>
+            <ul class="resumen__lista" id="resumen-lista"></ul>
+          </div>
+
+          <!-- Guardado correcto -->
+          <div
+            class="resumen resumen--exito"
+            id="resumen-exito"
+            role="status"
+            hidden
+          >
+            <p class="resumen__titulo">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" />
+                <path d="m16 9-5.5 5.5L8 12" />
+              </svg>
+              <span>Configuración válida y guardada.</span>
+            </p>
+            <p class="resumen__texto">
+              Se descargó <strong id="exito-archivo"></strong>. Para usarla otra
+              vez, ábrela en «Cargar configuración».
+            </p>
+            <div class="resumen__acciones">
+              <button
+                type="button"
+                class="boton boton--primario"
+                id="btn-simular"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"
+                  />
+                </svg>
+                Iniciar simulación
+              </button>
+              <button
+                type="button"
+                class="boton boton--fantasma"
+                id="btn-descargar"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 15V3" />
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <path d="m7 10 5 5 5-5" />
+                </svg>
+                Descargar otra vez
+              </button>
+            </div>
+          </div>
+
+          <div class="acciones">
+            <div class="acciones__secundarias">
+              <button
+                type="button"
+                class="boton boton--fantasma"
+                id="btn-ejemplo"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"
+                  />
+                  <path d="M9 18h6" />
+                  <path d="M10 22h4" />
+                </svg>
+                Usar ejemplo
+              </button>
+              <button
+                type="button"
+                class="boton boton--fantasma"
+                id="btn-limpiar"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                  <path d="M3 3v5h5" />
+                </svg>
+                Limpiar
+              </button>
+            </div>
+            <button
+              type="submit"
+              class="boton boton--primario boton--guardar"
+              id="btn-guardar"
+            >
+              Guardar configuración
+              <span class="boton__flecha">
+                <svg viewBox="0 0 24 24">
+                  <path d="M5 12h14" />
+                  <path d="m12 5 7 7-7 7" />
+                </svg>
+              </span>
+            </button>
+          </div>
+        </section>
+      </form>
+
+      <!-- Volver -->
+      <div class="pie">
+        <span class="linea"></span>
+        <a class="salir" href="../modo1/automatico.html" id="btn-volver">
+          <!-- Ícono "arrow-left" de Lucide (licencia ISC) -->
+          <svg viewBox="0 0 24 24">
+            <path d="m12 19-7-7 7-7" />
+            <path d="M19 12H5" />
+          </svg>
+          <span>Volver</span>
+        </a>
+        <span class="linea"></span>
+      </div>
+    </main>
+
+    <!-- Mensaje flotante -->
+    <div class="aviso" id="aviso" role="status" aria-live="polite"></div>
+
+    <!-- Los íconos son de Lucide (licencia ISC) -->
+    <script src="maquina.js"></script>
+    <script src="configuracion.js"></script>
+  </body>
+</html>

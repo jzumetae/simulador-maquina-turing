@@ -1,0 +1,22 @@
+{
+  "nombre": "Lenguaje 0ⁿ1ⁿ",
+  "estados": ["q0", "q1", "q2", "q3", "q4"],
+  "alfabetoEntrada": ["0", "1"],
+  "alfabetoCinta": ["0", "1", "X", "Y", "B"],
+  "estadoInicial": "q0",
+  "blanco": "B",
+  "estadosFinales": ["q4"],
+  "transiciones": [
+    { "estado": "q0", "lee": "0", "nuevoEstado": "q1", "escribe": "X", "mueve": "R" },
+    { "estado": "q0", "lee": "Y", "nuevoEstado": "q3", "escribe": "Y", "mueve": "R" },
+    { "estado": "q1", "lee": "0", "nuevoEstado": "q1", "escribe": "0", "mueve": "R" },
+    { "estado": "q1", "lee": "1", "nuevoEstado": "q2", "escribe": "Y", "mueve": "L" },
+    { "estado": "q1", "lee": "Y", "nuevoEstado": "q1", "escribe": "Y", "mueve": "R" },
+    { "estado": "q2", "lee": "0", "nuevoEstado": "q2", "escribe": "0", "mueve": "L" },
+    { "estado": "q2", "lee": "X", "nuevoEstado": "q0", "escribe": "X", "mueve": "R" },
+    { "estado": "q2", "lee": "Y", "nuevoEstado": "q2", "escribe": "Y", "mueve": "L" },
+    { "estado": "q3", "lee": "Y", "nuevoEstado": "q3", "escribe": "Y", "mueve": "R" },
+    { "estado": "q3", "lee": "B", "nuevoEstado": "q4", "escribe": "B", "mueve": "R" }
+  ],
+  "palabra": "0011"
+}

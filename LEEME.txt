@@ -1,0 +1,101 @@
+SIMULADOR · MÁQUINA DE TURING — Proyecto final 2026
+=====================================================
+
+CÓMO ABRIRLO
+------------
+1. Doble clic en INICIAR.bat
+   Se abre una ventana negra (el servidor local) y el navegador en el menú:
+   http://localhost:5577
+   Deja la ventana negra abierta mientras usas el simulador; ciérrala para terminar.
+   No hay que instalar nada: usa PowerShell, que ya viene con Windows.
+
+2. Alternativa con VS Code + Live Server
+   Abre ESTA carpeta en VS Code, clic derecho en index.html → "Open with Live Server".
+   El puerto quedó en 5510 (.vscode/settings.json) porque en esta computadora
+   Oracle (tnslsnr) ocupa 127.0.0.1:5500, el puerto normal de Live Server: por eso
+   antes la página no cargaba.
+
+No abras los .html con doble clic (file://): los datos entre pantallas se guardan
+en el navegador y algunos navegadores lo bloquean en archivos sueltos.
+
+
+ESTRUCTURA
+----------
+index.html, styles.css, script.js   Menú principal (elige Modo 1 o Modo 2)
+formulario/                         Nueva configuración (Modo 1) y maquina.js (validación y .json)
+modo1/                              Modo 1 · Ejecución automática
+  automatico.*                        Opción 1 (configuración) y Opción 2 (ejecución)
+  Simulacion/                         Simulación gráfica
+modo2/                              Modo 2 · Ejecución manual (depuración / sandbox)
+  manual.*                            Preparación: alfabeto, estados, cinta inicial
+  sesion.js                           Datos del Modo 2 y exportación al Modo 1
+  Sandbox/                            Ejecución manual paso a paso
+ejemplos/                           Configuraciones .json de ejemplo para el Modo 1
+herramientas/servidor.ps1           Servidor local que usa INICIAR.bat
+_version-anterior/                  Archivos viejos que estaban en esta carpeta (se pueden borrar)
+
+
+MODO 1 · CINTA ALEATORIA
+------------------------
+Cada vez que se abre la simulación, se escribe una palabra o se presiona
+"Nueva cinta aleatoria", las 50 celdas se llenan al azar con los símbolos de Σ
+y el blanco B. Los auxiliares de Γ (X, Y, ...) nunca están en la cinta inicial:
+son centinelas que solo escribe la máquina al ejecutar.
+La palabra se escribe encima desde la celda 1, con un blanco antes (celda 0) y
+otro justo después: así la máquina verifica exactamente la palabra ingresada y
+la misma palabra da siempre el mismo resultado, aunque cambie el resto de la cinta.
+"Ejecutar" usa la palabra que está en el campo aunque no se haya presionado
+"Escribir en la cinta". "Reiniciar" conserva la misma cinta.
+Si se llega desde el Modo 2 ("Ejecutar en Modo 1"), la primera vez se usa la
+misma cinta de la sesión manual, para reproducirla tal cual.
+
+
+MODO 2 · CÓMO CUMPLE LA GUÍA
+----------------------------
+1. Alfabeto y cinta al azar   Se ingresa el alfabeto Σ (y símbolos auxiliares opcionales).
+                              "Llenar al azar" llena N celdas con Σ, incluyendo el blanco
+                              ^ (□ = ^) si la casilla está marcada. También se puede escribir
+                              el contenido o tocar cada celda.
+2. Estado final o paro        Se elige el estado final (la meta). La ejecución termina al
+                              llegar a él, o antes con S (estado de paro).
+3. Movimientos D, I, S        En cada paso pregunta "¿Qué quieres hacer?" para la celda que
+                              lee el cabezal y despliega tres preguntas: 1) ¿cambiar el
+                              símbolo?, 2) ¿a qué estado pasa?, 3) ¿hacia dónde se mueve?
+                              D = derecha, I = izquierda, S = no se mueve (paro).
+4. Cambiar el símbolo         Pregunta 1: "Continuar sin cambios" o "Cambiar el símbolo";
+                              si se cambia, pregunta "¿Por cuál?" con todas las opciones
+                              del alfabeto. No deja mover hasta elegir el símbolo.
+                              La cinta inicial solo lleva Σ y ^: si una cinta grabada
+                              tiene auxiliares (X, Y, ...), al usarla como cinta inicial
+                              se cambian por ^.
+5. Segmento modificado        Las celdas cambiadas llevan un punto amarillo y un corchete;
+                              debajo de la cinta se ve el segmento "Antes / Ahora".
+6. Grabar la cinta            "Grabar cinta" guarda el contenido actual (pestaña Grabadas):
+                              se puede descargar (.json) y usar como cinta inicial.
+7. Registro → Modo 1          La pestaña Registro guarda cada movimiento y cambio con su
+                              terna (estado, contenido, posición). Cada paso se vuelve una
+                              transición δ; "Ejecutar en Modo 1" abre la máquina en el
+                              Modo 1 y "Descargar .json" la guarda para "Cargar configuración".
+                              "Registro .txt" descarga todo el registro.
+
+Extras: deshacer (Ctrl+Z), aviso si la máquina deja de ser determinista y comprobación
+de que el Modo 1 reproduce la sesión paso a paso.
+
+Observaciones de la licenciada (ya implementadas en el Modo 2):
+- Crear o eliminar estados   En «Estado siguiente», «+ nuevo» agrega un estado a Q y la ×
+                             de una ficha lo quita (solo si ningún paso lo usa y no es el
+                             inicial, el final ni el estado actual).
+- Estado inicial en cualquier punto de la cinta
+                             En la preparación se elige la celda donde arranca el cabezal
+                             (número, «Al azar» o «Tocar una celda: pone el cabezal»).
+                             Al exportar, la palabra empieza en esa celda; en el Modo 1
+                             queda desde la celda 1, donde el Modo 1 la toma.
+- Diagrama paso a paso o al final
+                             Selector en el diagrama: «Paso a paso» dibuja cada transición
+                             en cuanto la máquina la usa; «Al final» genera el diagrama
+                             completo cuando la ejecución termina (o con «Generar ahora»).
+
+Atajos del sandbox: ← I · ↓ S · → D · teclear un símbolo lo elige · Esc = sin cambios
+· Ctrl+Z o Retroceso = deshacer · R = reiniciar.
+
+En el archivo para el Modo 1: D se escribe R, I se escribe L y el blanco ^ se escribe B.

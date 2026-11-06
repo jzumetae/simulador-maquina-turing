@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulación · Máquina de Turing</title>
+
+  <!-- Fuentes: Libre Baskerville (textos) y JetBrains Mono (símbolos de la cinta y transiciones) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <!-- styles.css trae los colores, la decoración y las piezas comunes;
+       simulacion.css solo agrega lo propio de esta pantalla -->
+  <link rel="stylesheet" href="../../styles.css">
+  <link rel="stylesheet" href="simulacion.css">
+</head>
+<body>
+
+  <!-- ===================== DECORACIÓN DE FONDO ===================== -->
+  <div class="decoracion" aria-hidden="true">
+
+    <!-- Esquina superior izquierda: triángulo, línea diagonal y línea de circuito -->
+    <svg class="deco deco--sup-izq" viewBox="0 0 300 240">
+      <defs>
+        <linearGradient id="g-esquina" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#0D2C47"/>
+          <stop offset="0.6" stop-color="#1E486A"/>
+          <stop offset="1" stop-color="#3E6888"/>
+        </linearGradient>
+        <linearGradient id="g-circuito-izq" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#4B6E8A" stop-opacity="0"/>
+          <stop offset="0.4" stop-color="#4B6E8A"/>
+        </linearGradient>
+      </defs>
+      <polygon points="0,0 192,0 0,192" fill="url(#g-esquina)"/>
+      <line x1="222" y1="0" x2="0" y2="224" stroke="#3B6584" stroke-width="1.2"/>
+      <path d="M40 90 H238 L266 78 H277" fill="none" stroke="url(#g-circuito-izq)" stroke-width="1.4"/>
+      <circle cx="240" cy="90" r="3" fill="#4B6E8A"/>
+      <rect x="277" y="72" width="11" height="11" fill="#306284"/>
+    </svg>
+
+    <!-- Esquina superior derecha: líneas de circuito -->
+    <svg class="deco deco--sup-der" viewBox="1236 0 300 120">
+      <g fill="none" stroke="#7F9CB4" stroke-width="1.3">
+        <path d="M1283 88 H1343 L1440 0"/>
+        <path d="M1370 88 H1395 L1492 0"/>
+      </g>
+      <rect x="1273" y="83" width="10" height="10" fill="#4E7699"/>
+      <rect x="1463" y="72" width="11" height="11" fill="#628AA8"/>
+    </svg>
+
+    <!-- Esquina inferior izquierda: bandas diagonales -->
+    <svg class="deco deco--inf-izq" viewBox="0 600 780 424">
+      <defs>
+        <linearGradient id="g-banda-oscura" x1="0" y1="0" x2="1" y2="0.35">
+          <stop offset="0" stop-color="#0C2A45"/>
+          <stop offset="1" stop-color="#245072"/>
+        </linearGradient>
+        <linearGradient id="g-banda-media" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#2C5A7E" stop-opacity="0.95"/>
+          <stop offset="0.6" stop-color="#5E87A8" stop-opacity="0.75"/>
+          <stop offset="1" stop-color="#B9CBD8" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="g-banda-clara" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#6F93B0" stop-opacity="0.3"/>
+          <stop offset="1" stop-color="#6F93B0" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <line x1="0" y1="660" x2="170" y2="822" stroke="#AEBFCC" stroke-width="1"/>
+      <polygon points="0,650 520,944 150,841 0,700" fill="url(#g-banda-clara)"/>
+      <polygon points="0,700 150,841 430,1024 0,1024" fill="url(#g-banda-oscura)"/>
+      <polygon points="150,841 780,1015 780,1024 430,1024" fill="url(#g-banda-media)"/>
+    </svg>
+
+    <!-- Esquina inferior derecha: arco grande -->
+    <svg class="deco deco--inf-der" viewBox="1236 650 300 374">
+      <circle cx="1575" cy="1005" r="320" fill="none" stroke="#8EA8BC" stroke-width="1.2"/>
+    </svg>
+  </div>
+
+  <!-- ===================== CONTENIDO ===================== -->
+  <!-- data-modo cambia entre "automatico" y "pasos" (paso a paso);
+       el CSS muestra los controles de cada forma de ver la ejecución -->
+  <main class="sim" data-modo="automatico">
+
+    <header class="encabezado sim__encabezado">
+      <p class="encabezado__sup">
+        <span class="linea"></span>
+        <span>Modo 1 · Ejecución automática</span>
+        <span class="linea"></span>
+      </p>
+      <h1 class="titulo" id="nombre-maquina">Máquina de Turing</h1>
+
+      <!-- Cómo se ve la ejecución: continua o paso a paso -->
+      <div class="selector-modo" role="group" aria-label="Forma de ejecución">
+        <button type="button" class="selector-modo__opcion" data-modo="automatico" aria-pressed="true">
+          <!-- Ícono "play" de Lucide (licencia ISC) -->
+          <svg viewBox="0 0 24 24"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"/></svg>
+          <span>Automática</span>
+        </button>
+        <button type="button" class="selector-modo__opcion" data-modo="pasos" aria-pressed="false">
+          <!-- Ícono "step-forward" de Lucide (licencia ISC) -->
+          <svg viewBox="0 0 24 24"><path d="M6 4v16"/><path d="M10 4l10 8-10 8z"/></svg>
+          <span>Paso a paso</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="sim__tablero">
+
+      <!-- ---------- Diagrama de estados ---------- -->
+      <section class="tarjeta panel panel--diagrama" aria-labelledby="titulo-diagrama">
+        <header class="panel__cabecera">
+          <h2 class="panel__titulo" id="titulo-diagrama">Diagrama de estados</h2>
+          <span class="insignia" id="insignia" hidden></span>
+          <p class="leyenda">
+            <span class="leyenda__item">
+              <svg viewBox="0 0 26 12"><path d="M1 6 H20"/><path d="M17 2 L24 6 L17 10 Z" class="relleno"/></svg>
+              inicial
+            </span>
+            <span class="leyenda__item">
+              <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="7"/><circle cx="8" cy="8" r="4.4"/></svg>
+              final
+            </span>
+          </p>
+        </header>
+
+        <!-- simulacion.js dibuja aquí los estados y las transiciones -->
+        <div class="diagrama-sim">
+          <svg id="diagrama" role="img" aria-label="Diagrama de estados de la máquina"></svg>
+        </div>
+
+        <footer class="panel__pie">
+          <p class="definicion-formal" id="definicion-formal"></p>
+          <p class="notacion">a/b,M = lee a, escribe b, mueve M</p>
+        </footer>
+      </section>
+
+      <!-- ---------- Columna derecha: estado y transiciones ---------- -->
+      <div class="sim__lateral">
+        <section class="tarjeta panel panel--estado" aria-labelledby="titulo-estado">
+          <h2 class="panel__titulo" id="titulo-estado">Estado de la máquina</h2>
+          <dl class="datos">
+            <div class="dato">
+              <dt>Estado actual</dt>
+              <dd id="dato-estado" class="dato__estado">q<sub>0</sub></dd>
+            </div>
+            <div class="dato">
+              <dt>Símbolo leído</dt>
+              <dd id="dato-simbolo" class="dato__mono">B</dd>
+            </div>
+            <div class="dato">
+              <dt>Posición</dt>
+              <dd id="dato-posicion" class="dato__mono">1</dd>
+            </div>
+            <div class="dato">
+              <dt>Pasos</dt>
+              <dd id="dato-pasos" class="dato__mono">0</dd>
+            </div>
+            <div class="dato dato--ancho">
+              <dt>Resultado</dt>
+              <dd id="dato-resultado" class="dato__resultado" data-situacion="lista">Lista para iniciar</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="tarjeta panel panel--transiciones">
+          <div class="pestanas" role="tablist">
+            <button type="button" class="pestanas__boton" role="tab" id="tab-historial" aria-controls="pestana-historial" aria-selected="true" data-pestana="historial">Historial</button>
+            <button type="button" class="pestanas__boton" role="tab" id="tab-delta" aria-controls="pestana-delta" aria-selected="false" data-pestana="delta">Transiciones <span class="minuscula">δ</span></button>
+          </div>
+
+          <!-- Historial de configuraciones: la terna (Estado, Contenido, Posición) de cada paso.
+               simulacion.js agrega una fila en cuanto termina cada paso. -->
+          <div class="pestana" id="pestana-historial" role="tabpanel" aria-labelledby="tab-historial">
+            <table class="historial">
+              <thead>
+                <tr>
+                  <th scope="col">Paso</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Contenido</th>
+                  <th scope="col">Posición</th>
+                </tr>
+              </thead>
+              <tbody id="historial"></tbody>
+            </table>
+          </div>
+
+          <div class="pestana" id="pestana-delta" role="tabpanel" aria-labelledby="tab-delta" hidden>
+            <table class="tabla-delta">
+              <tbody id="tabla-delta"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- ---------- Cinta ---------- -->
+      <section class="tarjeta panel panel--cinta" aria-labelledby="titulo-cinta">
+        <header class="panel__cabecera">
+          <h2 class="panel__titulo" id="titulo-cinta">Cinta</h2>
+          <span class="cinta-info" id="cinta-info">50 celdas · 0 a 49</span>
+          <form class="palabra" id="form-palabra" autocomplete="off">
+            <!-- La palabra no se escribe en la cinta: al ejecutar, la máquina la busca
+                 en la cinta al azar (Enter en el campo también la busca) -->
+            <label for="campo-palabra">Palabra a buscar</label>
+            <input type="text" id="campo-palabra" spellcheck="false" title="" aria-describedby="cinta-info">
+            <button type="button" id="btn-aleatoria" title="Vuelve a llenar la cinta al azar con Σ y el blanco; la palabra no cambia">Nueva cinta aleatoria</button>
+          </form>
+        </header>
+
+        <!-- Cinta fija de 50 celdas (0 a 49): el cabezal se mueve sobre ella.
+             simulacion.js crea las celdas. -->
+        <div class="cinta-sim">
+          <div class="cinta-sim__ventana" id="ventana-cinta">
+            <div class="cinta-sim__tira" id="tira">
+              <div class="cinta-sim__cabezal" id="cabezal" aria-hidden="true">
+                <span class="cinta-sim__estado" id="cabezal-estado">q<sub>0</sub></span>
+                <span class="cinta-sim__punta"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- Controles y explicación del paso ---------- -->
+      <section class="tarjeta panel panel--controles" aria-label="Controles de la simulación">
+        <div class="controles">
+          <button type="button" class="control" id="btn-reiniciar" title="Reiniciar (R)">
+            <span class="control__circulo">
+              <!-- Ícono "rotate-ccw" de Lucide (licencia ISC) -->
+              <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            </span>
+            <span class="control__texto">Reiniciar</span>
+          </button>
+
+          <!-- Solo paso a paso -->
+          <button type="button" class="control solo-pasos" id="btn-anterior" title="Paso anterior (←)">
+            <span class="control__circulo">
+              <!-- Ícono "chevron-left" de Lucide (licencia ISC) -->
+              <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+            </span>
+            <span class="control__texto">Anterior</span>
+          </button>
+
+          <button type="button" class="control control--principal solo-pasos" id="btn-siguiente" title="Siguiente paso (→ o Espacio)">
+            <span class="control__circulo">
+              <!-- Ícono "chevron-right" de Lucide (licencia ISC) -->
+              <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+            </span>
+            <span class="control__texto">Siguiente</span>
+          </button>
+
+          <!-- Solo en automático: cambia entre Ejecutar, Pausar, Reanudar y Repetir -->
+          <button type="button" class="control control--principal solo-auto" id="btn-ejecutar" data-icono="play" title="Ejecutar / pausar (Espacio)">
+            <span class="control__circulo">
+              <svg class="icono-play" viewBox="0 0 24 24"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"/></svg>
+              <!-- Ícono "pause" de Lucide (licencia ISC) -->
+              <svg class="icono-pausa" viewBox="0 0 24 24"><rect x="14" y="3" width="5" height="18" rx="1"/><rect x="5" y="3" width="5" height="18" rx="1"/></svg>
+              <svg class="icono-repetir" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            </span>
+            <span class="control__texto" id="texto-ejecutar">Ejecutar</span>
+          </button>
+        </div>
+
+        <div class="explicacion" aria-live="polite">
+          <p class="explicacion__titulo" id="explicacion-titulo"></p>
+          <p class="explicacion__texto" id="explicacion-texto"></p>
+          <p class="explicacion__proximo solo-pasos" id="explicacion-proximo"></p>
+        </div>
+
+        <!-- Milisegundos entre un paso y el siguiente (se puede cambiar mientras corre) -->
+        <div class="velocidad solo-auto">
+          <div class="velocidad__cabecera">
+            <label for="velocidad">Tiempo por paso</label>
+            <span class="velocidad__valor">
+              <input type="number" id="velocidad-ms" min="100" max="3000" step="100" value="900" aria-label="Milisegundos por paso">
+              <span>ms</span>
+            </span>
+          </div>
+          <input type="range" id="velocidad" min="100" max="3000" step="100" value="900" aria-label="Milisegundos por paso">
+          <div class="velocidad__marcas"><span>100 ms · rápido</span><span>3000 ms · lento</span></div>
+        </div>
+
+        <p class="atajos solo-pasos">
+          <kbd>←</kbd> <kbd>→</kbd> pasos <span>·</span> <kbd>R</kbd> reiniciar
+        </p>
+      </section>
+    </div>
+
+    <!-- Volver -->
+    <div class="pie">
+      <span class="linea"></span>
+      <a class="salir" id="btn-volver" href="../automatico.html">
+        <!-- Ícono "arrow-left" de Lucide (licencia ISC) -->
+        <svg viewBox="0 0 24 24"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        <span>Volver</span>
+      </a>
+      <span class="linea"></span>
+    </div>
+  </main>
+
+  <!-- Mensaje flotante -->
+  <div class="aviso" id="aviso" role="status" aria-live="polite"></div>
+
+  <!-- maquina.js: validación y constantes de la cinta (50 celdas) -->
+  <script src="../../formulario/maquina.js"></script>
+  <script src="simulacion.js"></script>
+</body>
+</html>

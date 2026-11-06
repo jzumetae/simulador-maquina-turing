@@ -1,0 +1,450 @@
+/* =========================================================
+   Simulador · Máquina de Turing — pantalla "Ejecución automática"
+   Se carga DESPUÉS de styles.css: usa sus colores, fuentes,
+   decoración, encabezado, separador, pie y aviso.
+   ========================================================= */
+
+/* ---------- Encabezado de esta pantalla ---------- */
+.pantalla-auto .encabezado__sup {
+  font-size: 1.5rem;
+  letter-spacing: 0.32em;
+}
+
+.pantalla-auto .encabezado__sup span:not(.linea) {
+  margin-right: -0.32em;
+}
+
+.pantalla-auto .titulo {
+  font-size: 4.2rem;
+}
+
+/* el texto es más largo que el del menú: letra y líneas un poco más cortas
+   para que no pase del ancho de las tarjetas */
+.pantalla-auto .separador {
+  margin-top: 2.4rem;
+  gap: 1.4rem;
+  font-size: 1.15rem;
+  letter-spacing: 0.24em;
+}
+
+.pantalla-auto .separador span {
+  margin-right: -0.24em;
+}
+
+.pantalla-auto .separador::before,
+.pantalla-auto .separador::after {
+  width: 3.5rem;
+}
+
+/* ---------- Grupos: Opción 1 (configuración) y Opción 2 (ejecución) ---------- */
+.grupo-opciones {
+  width: 57.8rem;
+  max-width: 100%;
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  margin-top: 2.1rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--seccion);
+  animation: aparecer 0.7s ease both;
+  animation-delay: 0.25s;
+}
+
+.grupo-opciones__num {
+  padding: 0.2rem 0.75rem;
+  border: 1px solid var(--linea-deco);
+  border-radius: 2rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  color: var(--subtitulo);
+}
+
+/* ---------- Tarjetas de opción ---------- */
+.opciones {
+  width: 57.8rem;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-top: 0.9rem;
+  animation: aparecer 0.7s ease both;
+  animation-delay: 0.3s;
+}
+
+.opcion {
+  display: grid;
+  grid-template-columns: 5.375rem 1fr 4.125rem;
+  align-items: center;
+  column-gap: 2.1rem;
+  width: 100%;
+  min-height: 8.8rem;
+  padding: 1.35rem 2.4rem 1.35rem 2.2rem;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease, filter 0.25s ease;
+}
+
+/* ---------- Tarjeta "Ejecutar" ---------- */
+.opcion--ejecutar {
+  background: linear-gradient(100deg, var(--card-def-1) 0%, var(--card-def-2) 58%, var(--card-def-3) 100%);
+}
+
+.opcion--ejecutar .icono-flecha,
+.opcion--ejecutar[aria-disabled="true"] .icono-candado {
+  display: block;
+}
+
+.opcion--ejecutar .icono-candado,
+.opcion--ejecutar[aria-disabled="true"] .icono-flecha {
+  display: none;
+}
+
+.opcion--ejecutar .icono-candado {
+  width: 1.8rem;
+  height: 1.8rem;
+  stroke-width: 1.8;
+}
+
+.opcion--ejecutar .opcion__icono svg {
+  margin-left: 0.3rem; /* el triángulo se ve centrado */
+}
+
+/* Bloqueada: todavía no hay configuración */
+.opcion--ejecutar[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.55;
+  filter: saturate(0.35);
+}
+
+.opcion--ejecutar[aria-disabled="true"]:hover {
+  transform: none;
+  box-shadow: var(--sombra);
+}
+
+.opcion--ejecutar[aria-disabled="true"]:hover .opcion__flecha {
+  background: none;
+  color: inherit;
+}
+
+.opcion--ejecutar[aria-disabled="true"] .opcion__extra {
+  color: var(--card-texto);
+}
+
+/* Lista: se ilumina al cargar o volver con una configuración */
+.opcion--ejecutar.lista {
+  animation: resaltar-lista 1.4s ease 0.4s;
+}
+
+@keyframes resaltar-lista {
+  35% {
+    box-shadow: 0 0 0 3px var(--acento), 0 1.1rem 2.4rem rgba(1, 23, 44, 0.34);
+  }
+}
+
+/* Sacudida al intentar ejecutar sin configuración */
+.opcion.sacudir {
+  animation: sacudir 0.45s ease;
+}
+
+@keyframes sacudir {
+  20%, 60% { transform: translateX(-0.5rem); }
+  40%, 80% { transform: translateX(0.5rem); }
+}
+
+.opcion--nueva {
+  background: linear-gradient(100deg, var(--card-auto-1) 0%, var(--card-auto-2) 58%, var(--card-auto-3) 100%);
+}
+
+.opcion--cargar {
+  background: linear-gradient(100deg, var(--card-man-1) 0%, var(--card-man-2) 58%, var(--card-man-3) 100%);
+}
+
+/* franja diagonal: más angosta porque la tarjeta es más ancha */
+.opcion::before {
+  clip-path: polygon(86% 0, 100% 0, 100% 100%, 75% 100%);
+}
+
+.opcion--cargar::before {
+  background: linear-gradient(160deg, rgba(140, 190, 225, 0.12), rgba(140, 190, 225, 0.22));
+}
+
+.opcion:hover {
+  transform: translateY(-0.25rem);
+  box-shadow: 0 1.1rem 2.4rem rgba(1, 23, 44, 0.34), 0 0.2rem 0.5rem rgba(1, 23, 44, 0.2);
+}
+
+.opcion:focus-visible {
+  outline: 2px solid var(--seccion);
+  outline-offset: 4px;
+}
+
+.opcion svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Círculo del ícono */
+.opcion__icono {
+  width: 5.375rem;
+  height: 5.375rem;
+  border: 1.6px solid rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 0.8rem rgba(176, 217, 242, 0.22), inset 0 0 0.6rem rgba(176, 217, 242, 0.12);
+}
+
+.opcion__icono svg {
+  width: 2.7rem;
+  height: 2.7rem;
+  stroke-width: 1.5;
+}
+
+/* Bloque de texto con la línea vertical de la izquierda (como la tarjeta de definición) */
+.opcion__texto {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0.25rem 0 0.25rem 2.1rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.opcion__titulo {
+  font-size: 1.45rem;
+  line-height: 1.3;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--card-titulo);
+}
+
+.opcion__desc {
+  margin-top: 0.7rem;
+  font-size: 1.12rem;
+  line-height: 1.55;
+  color: var(--card-texto);
+}
+
+.opcion__extra {
+  margin-top: 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  letter-spacing: 0.08em;
+  color: var(--acento);
+  opacity: 0.75;
+}
+
+.opcion__extra sub {
+  font-size: 0.7em;
+}
+
+/* Círculo de la flecha */
+.opcion__flecha {
+  width: 4.125rem;
+  height: 4.125rem;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.opcion__flecha svg {
+  width: 2.35rem;
+  height: 2.35rem;
+  stroke-width: 2;
+  transition: transform 0.25s ease;
+}
+
+.opcion:hover .opcion__flecha,
+.opcion:focus-visible .opcion__flecha {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--card-auto-1);
+}
+
+.opcion:hover .opcion__flecha svg {
+  transform: translateX(0.15rem);
+}
+
+/* Mientras se arrastra un archivo encima de "Cargar configuración" */
+.opcion--cargar.arrastrando {
+  transform: translateY(-0.25rem);
+  outline: 2px dashed var(--acento);
+  outline-offset: -0.7rem;
+}
+
+/* Mientras se lee el archivo */
+.opcion.cargando {
+  cursor: progress;
+  opacity: 0.8;
+}
+
+/* ---------- Volver al menú (enlace con el estilo de "Salir") ---------- */
+a.salir {
+  text-decoration: none;
+}
+
+.pantalla-auto .pie {
+  margin-top: 2.8rem;
+}
+
+/* ---------- Aviso de error ---------- */
+.aviso.error {
+  background: #3A1620;
+  color: #FBE4E7;
+  box-shadow: var(--sombra), inset 0.3rem 0 0 #E8828F;
+}
+
+/* ---------- Ventanas angostas (tablet / celular) ---------- */
+@media (max-width: 860px) {
+  .pantalla-auto .encabezado__sup {
+    font-size: 1rem;
+    letter-spacing: 0.22em;
+  }
+
+  .pantalla-auto .encabezado__sup span:not(.linea) {
+    margin-right: -0.22em;
+  }
+
+  .pantalla-auto .titulo {
+    font-size: clamp(2.1rem, 9vw, 3.4rem);
+  }
+
+  .pantalla-auto .separador {
+    margin-top: 2.4rem;
+    gap: 0.9rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.18em;
+  }
+
+  .pantalla-auto .separador span {
+    margin-right: -0.18em;
+  }
+
+  .pantalla-auto .separador::before,
+  .pantalla-auto .separador::after {
+    width: 1.5rem;
+  }
+
+  .opciones {
+    max-width: min(36rem, 100%);
+  }
+
+  .opcion {
+    grid-template-columns: 3.8rem 1fr 3rem;
+    column-gap: 1.1rem;
+    min-height: 0;
+    padding: 1.4rem 1.3rem;
+  }
+
+  .opcion__icono {
+    width: 3.8rem;
+    height: 3.8rem;
+  }
+
+  .opcion__icono svg {
+    width: 1.9rem;
+    height: 1.9rem;
+  }
+
+  .opcion__texto {
+    padding-left: 1.1rem;
+  }
+
+  .opcion__titulo {
+    font-size: 1.05rem;
+    letter-spacing: 0.1em;
+  }
+
+  .opcion__desc {
+    font-size: 0.95rem;
+  }
+
+  .opcion__extra {
+    font-size: 0.78rem;
+  }
+
+  .opcion__flecha {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .opcion__flecha svg {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+
+  .pantalla-auto .pie {
+    margin-top: 2.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  /* en el celular la cinta inclinada se achica para no tapar el pie */
+  .deco--inf-izq {
+    width: 20rem;
+    height: 10.9rem;
+    opacity: 0.45;
+  }
+
+  .pantalla-auto {
+    padding-bottom: 6rem;
+  }
+
+  .pantalla-auto .encabezado__sup {
+    gap: 0.8rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.18em;
+  }
+
+  .pantalla-auto .encabezado__sup span:not(.linea) {
+    margin-right: -0.18em;
+  }
+
+  .pantalla-auto .encabezado__sup .linea {
+    width: 1.5rem;
+  }
+
+  .pantalla-auto .lema {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    margin-right: -0.2em;
+  }
+
+  .pantalla-auto .pie {
+    gap: 0.9rem;
+  }
+
+  .pantalla-auto .pie .linea {
+    width: 2rem;
+  }
+
+  .pantalla-auto .salir {
+    gap: 0.8rem;
+    font-size: 1rem;
+    letter-spacing: 0.18em;
+    white-space: nowrap;
+  }
+
+  .opcion {
+    grid-template-columns: 3.4rem 1fr;
+  }
+
+  .opcion__icono {
+    width: 3.4rem;
+    height: 3.4rem;
+  }
+
+  .opcion__extra {
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+  }
+
+  .opcion__flecha {
+    display: none;
+  }
+}

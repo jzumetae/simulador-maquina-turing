@@ -1,0 +1,738 @@
+/* =========================================================
+   Simulador · Máquina de Turing — estilos del menú principal
+   Medidas en rem: 1rem = 16px cuando la ventana mide 1536×1024
+   (el tamaño del diseño). Todo escala junto con la ventana.
+   ========================================================= */
+
+:root {
+  /* Fondo de la página */
+  --fondo-1: #EAEDF1;
+  --fondo-2: #E6EBEF;
+  --fondo-3: #DEE3E8;
+
+  /* Textos sobre el fondo claro */
+  --titulo: #030F23;
+  --subtitulo: #506D84;
+  --lema: #7791A6;
+  --seccion: #1E425B;
+  --salir: #334D62;
+  --linea-deco: #A0B4C3;
+  --binario: #8199AC;
+  --diagrama: #546E81;
+
+  /* Tarjetas */
+  --card-def-1: #012139;
+  --card-def-2: #0C3E62;
+  --card-def-3: #1D5377;
+  --card-auto-1: #01172C;
+  --card-auto-2: #031D34;
+  --card-auto-3: #1C4865;
+  --card-man-1: #0D3C5A;
+  --card-man-2: #205372;
+  --card-man-3: #2F6287;
+
+  /* Textos dentro de las tarjetas */
+  --card-titulo: #D6EDFA;
+  --card-texto: #E6F6FE;
+  --card-divisor: rgba(255, 255, 255, 0.35);
+  --acento: #B0D9F2;
+
+  /* Fuentes */
+  --font-serif: 'Libre Baskerville', Georgia, 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono', Consolas, monospace;
+
+  /* Forma */
+  --radio: 0.65rem;
+  --sombra: 0 0.75rem 1.9rem rgba(1, 23, 44, 0.28), 0 0.15rem 0.4rem rgba(1, 23, 44, 0.18);
+}
+
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  /* 16px en 1536×1024; se ajusta al ancho o alto, lo que sea más chico */
+  font-size: max(10px, min(1.0417vw, 1.5625vh));
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: var(--font-serif);
+  color: var(--titulo);
+  background: linear-gradient(180deg, var(--fondo-1) 0%, var(--fondo-2) 50%, var(--fondo-3) 100%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+/* ---------- Decoración de fondo ---------- */
+.decoracion {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.deco {
+  position: absolute;
+  display: block;
+}
+
+.deco--sup-izq {
+  top: 0;
+  left: 0;
+  width: 18.75rem;
+  height: 15rem;
+}
+
+.deco--diagrama-izq {
+  top: 8.75rem;
+  left: 4.2rem;
+  width: 15rem;
+  height: 14.375rem;
+}
+
+.deco--sup-der {
+  top: 0;
+  right: 0;
+  width: 18.75rem;
+  height: 7.5rem;
+}
+
+.deco--binario {
+  top: 7.9rem;
+  right: 3.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-family: var(--font-mono);
+  font-weight: 300;
+  font-size: 1.55rem;
+  line-height: 2.47rem;
+  letter-spacing: 0.3em;
+  color: var(--binario);
+  opacity: 0.9;
+}
+
+.deco--binario span:nth-child(odd) {
+  opacity: 0.85;
+}
+
+.deco--inf-izq {
+  bottom: 0;
+  left: 0;
+  width: 48.75rem;
+  height: 26.5rem;
+}
+
+.deco--inf-der {
+  bottom: 0;
+  right: 0;
+  width: 18.75rem;
+  height: 23.375rem;
+}
+
+/* Diagramas de estados */
+.diagrama__flechas path {
+  fill: none;
+  stroke: var(--diagrama);
+  stroke-width: 1.5;
+  opacity: 0.85;
+}
+
+.diagrama__nodos circle {
+  fill: rgba(255, 255, 255, 0.25);
+  stroke: var(--diagrama);
+  stroke-width: 1.6;
+}
+
+.diagrama__nodos text {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 24px;
+  fill: #3E5A70;
+  text-anchor: middle;
+}
+
+/* Cinta inclinada de la esquina inferior */
+.cinta-inclinada line,
+.cinta-inclinada rect:not(.cinta-inclinada__fondo) {
+  fill: rgba(255, 255, 255, 0.07);
+  stroke: rgba(226, 238, 247, 0.75);
+  stroke-width: 1.3;
+}
+
+.cinta-inclinada text {
+  font-family: var(--font-serif);
+  font-size: 30px;
+  fill: #E9F2F8;
+  text-anchor: middle;
+}
+
+/* ---------- Contenedor principal ---------- */
+.menu {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1rem 4rem;
+}
+
+/* centra el contenido en la ventana sin cortarlo si no cabe */
+.menu > :first-child {
+  margin-top: auto;
+}
+
+.menu > :last-child {
+  margin-bottom: auto;
+}
+
+/* ---------- Encabezado ---------- */
+.encabezado {
+  text-align: center;
+}
+
+.encabezado__sup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.4rem;
+  font-size: 1.85rem;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  color: var(--subtitulo);
+  line-height: 1;
+}
+
+/* el espaciado de letras deja un hueco al final; esto lo compensa */
+.encabezado__sup span:not(.linea) {
+  margin-right: -0.36em;
+}
+
+.linea {
+  display: block;
+  width: 10.2rem;
+  height: 1px;
+  background: var(--linea-deco);
+}
+
+.titulo {
+  margin-top: 1.25rem;
+  font-size: 4.65rem;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.005em;
+  color: var(--titulo);
+}
+
+.lema {
+  margin-top: 1.25rem;
+  font-size: 1.12rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--lema);
+  margin-right: -0.34em;
+}
+
+.lema .punto {
+  margin: 0 0.25em;
+}
+
+/* ---------- Tarjetas (base) ---------- */
+.tarjeta {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  color: var(--card-texto);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Franja diagonal más clara del lado derecho */
+.tarjeta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, rgba(120, 170, 210, 0.16), rgba(120, 170, 210, 0.28));
+  clip-path: polygon(90% 0, 100% 0, 100% 100%, 65% 100%);
+  pointer-events: none;
+}
+
+.tarjeta > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- Tarjeta de definición ---------- */
+.definicion {
+  width: 57.8rem;
+  max-width: 100%;
+  margin-top: 3.35rem;
+  display: grid;
+  grid-template-columns: 20.45rem 1fr;
+  align-items: center;
+  min-height: 13.1rem;
+  padding: 1.6rem 0;
+  background: linear-gradient(100deg, var(--card-def-1) 0%, var(--card-def-2) 62%, var(--card-def-3) 100%);
+}
+
+.definicion::before {
+  background: linear-gradient(160deg, rgba(120, 170, 210, 0.05), rgba(120, 170, 210, 0.14));
+  clip-path: polygon(80% 0, 100% 0, 100% 100%, 70% 100%);
+}
+
+.definicion__cinta {
+  display: flex;
+  justify-content: center;
+  padding-left: 0.6rem;
+}
+
+.definicion__texto {
+  border-left: 1px solid rgba(255, 255, 255, 0.45);
+  padding: 0.2rem 1.6rem 0.2rem 2.2rem;
+}
+
+.definicion h2 {
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--card-titulo);
+}
+
+.definicion p {
+  margin-top: 0.85rem;
+  font-size: 1.12rem;
+  line-height: 1.55;
+  color: var(--card-texto);
+}
+
+/* Cinta con cabezal */
+.cinta {
+  --celda: 2.5rem;
+  position: relative;
+  padding-top: 1.4rem;
+}
+
+.cinta__cabezal {
+  position: absolute;
+  top: 0;
+  left: calc(1.5px + var(--pos) * var(--celda) + var(--celda) / 2);
+  width: 0;
+  height: 0;
+  border-left: 0.6rem solid transparent;
+  border-right: 0.6rem solid transparent;
+  border-top: 0.9rem solid var(--acento);
+  transform: translateX(-50%);
+  transition: left 0.5s ease;
+}
+
+.cinta__celdas {
+  position: relative;
+  display: flex;
+  border: 1.5px solid rgba(217, 246, 255, 0.85);
+  border-radius: 0.4rem;
+}
+
+/* rieles que sobresalen arriba y abajo */
+.cinta__celdas::before,
+.cinta__celdas::after {
+  content: "";
+  position: absolute;
+  left: -0.5rem;
+  right: -0.5rem;
+  height: 0;
+  border-top: 1px solid rgba(217, 246, 255, 0.55);
+}
+
+.cinta__celdas::before {
+  top: -0.25rem;
+}
+
+.cinta__celdas::after {
+  bottom: -0.25rem;
+}
+
+.cinta__celdas span {
+  width: var(--celda);
+  height: 2.75rem;
+  display: grid;
+  place-items: center;
+  font-size: 1.35rem;
+  color: var(--card-texto);
+  transition: background-color 0.4s ease;
+}
+
+.cinta__celdas span + span {
+  border-left: 1.5px solid rgba(217, 246, 255, 0.85);
+}
+
+.cinta__celdas span.activa {
+  background: rgba(176, 217, 242, 0.12);
+}
+
+/* ---------- Separador "Selecciona el modo" ---------- */
+.separador {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  margin-top: 2.55rem;
+  font-size: 1.24rem;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--seccion);
+  text-align: center;
+}
+
+.separador::before,
+.separador::after {
+  content: "";
+  width: 11rem;
+  height: 1px;
+  background: var(--linea-deco);
+  flex-shrink: 0;
+}
+
+.separador span {
+  margin-right: -0.3em;
+}
+
+/* ---------- Tarjetas de modo ---------- */
+.modos {
+  display: grid;
+  grid-template-columns: repeat(2, 30.875rem);
+  gap: 1.625rem;
+  margin-top: 2.15rem;
+}
+
+.modo {
+  display: grid;
+  grid-template-columns: 5.375rem 1fr 4.125rem;
+  grid-template-rows: auto auto 1fr;
+  column-gap: 1.8rem;
+  min-height: 15.3rem;
+  padding: 1.6rem 2.1rem 1.6rem 2rem;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.modo--auto {
+  background: linear-gradient(110deg, var(--card-auto-1) 0%, var(--card-auto-2) 60%, var(--card-auto-3) 100%);
+}
+
+.modo--manual {
+  background: linear-gradient(110deg, var(--card-man-1) 0%, var(--card-man-2) 60%, var(--card-man-3) 100%);
+}
+
+.modo--manual::before {
+  background: linear-gradient(160deg, rgba(140, 190, 225, 0.12), rgba(140, 190, 225, 0.22));
+}
+
+.modo:hover {
+  transform: translateY(-0.25rem);
+  box-shadow: 0 1.1rem 2.4rem rgba(1, 23, 44, 0.34), 0 0.2rem 0.5rem rgba(1, 23, 44, 0.2);
+}
+
+.modo:focus-visible,
+.salir:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: 4px;
+}
+
+.modo__icono {
+  grid-column: 1;
+  grid-row: 1;
+  width: 5.375rem;
+  height: 5.375rem;
+  border: 1.6px solid rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 0.8rem rgba(176, 217, 242, 0.22), inset 0 0 0.6rem rgba(176, 217, 242, 0.12);
+}
+
+.modo__icono svg {
+  width: 3.1rem;
+  height: 3.1rem;
+  stroke-width: 1.6;
+}
+
+.modo svg,
+.salir svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.modo__titulo {
+  grid-column: 2 / 4;
+  grid-row: 1;
+  align-self: center;
+  font-size: 1.45rem;
+  line-height: 1.4;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--card-titulo);
+}
+
+.modo__divisor {
+  grid-column: 1 / 3;
+  grid-row: 2;
+  width: 20rem;
+  height: 1px;
+  margin: 1.15rem 0 1.35rem 0.25rem;
+  background: var(--card-divisor);
+}
+
+.modo__desc {
+  grid-column: 1 / 3;
+  grid-row: 3;
+  max-width: 16.5rem;
+  margin-left: 0.5rem;
+  font-size: 1.15rem;
+  line-height: 1.65;
+  color: var(--card-texto);
+}
+
+.modo__flecha {
+  grid-column: 3;
+  grid-row: 3;
+  align-self: end;
+  width: 4.125rem;
+  height: 4.125rem;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.modo__flecha svg {
+  width: 2.35rem;
+  height: 2.35rem;
+  stroke-width: 2;
+  transition: transform 0.25s ease;
+}
+
+.modo:hover .modo__flecha {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--card-auto-1);
+}
+
+.modo:hover .modo__flecha svg {
+  transform: translateX(0.15rem);
+}
+
+/* ---------- Pie: Salir ---------- */
+.pie {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  margin-top: 4.35rem;
+}
+
+.pie .linea {
+  width: 4.4rem;
+}
+
+.salir {
+  display: flex;
+  align-items: center;
+  gap: 1.3rem;
+  padding: 0.3rem 0.4rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.15rem;
+  letter-spacing: 0.25em;
+  color: var(--salir);
+  transition: color 0.2s ease;
+}
+
+.salir svg {
+  width: 2.3rem;
+  height: 2.3rem;
+  stroke-width: 1.7;
+  color: #45708F;
+}
+
+.salir:hover {
+  color: var(--titulo);
+}
+
+/* ---------- Aviso flotante ---------- */
+.aviso {
+  position: fixed;
+  left: 50%;
+  bottom: 2rem;
+  z-index: 10;
+  max-width: calc(100% - 2rem);
+  padding: 0.9rem 1.6rem;
+  border-radius: var(--radio);
+  background: var(--card-auto-2);
+  color: var(--card-texto);
+  font-size: 1.05rem;
+  box-shadow: var(--sombra);
+  opacity: 0;
+  transform: translate(-50%, 1rem);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+
+.aviso.visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* ---------- Animación de entrada ---------- */
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.encabezado,
+.definicion,
+.separador,
+.modos,
+.pie {
+  animation: aparecer 0.7s ease both;
+}
+
+.definicion { animation-delay: 0.1s; }
+.separador { animation-delay: 0.2s; }
+.modos { animation-delay: 0.3s; }
+.pie { animation-delay: 0.4s; }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ---------- Ventanas angostas (tablet / celular) ---------- */
+@media (max-aspect-ratio: 5/4) {
+  .deco--diagrama-izq,
+  .deco--binario,
+  .deco--inf-der {
+    display: none;
+  }
+}
+
+@media (max-width: 860px) {
+  html {
+    font-size: 15px;
+  }
+
+  .menu {
+    padding: 3rem 1rem 3rem;
+  }
+
+  .deco--sup-izq {
+    width: 7rem;
+    height: 5.6rem;
+  }
+
+  .deco--sup-der {
+    display: none;
+  }
+
+  .deco--inf-izq {
+    width: 30rem;
+    height: 16.3rem;
+    opacity: 0.6;
+  }
+
+  .encabezado__sup {
+    font-size: 1.3rem;
+    gap: 1.2rem;
+  }
+
+  .encabezado__sup .linea {
+    width: 3rem;
+  }
+
+  .titulo {
+    font-size: clamp(2.3rem, 10vw, 3.6rem);
+  }
+
+  .lema {
+    font-size: 0.85rem;
+  }
+
+  .definicion {
+    grid-template-columns: 1fr;
+    gap: 1.4rem;
+    padding: 1.6rem 0;
+  }
+
+  .definicion__cinta {
+    padding-left: 0;
+  }
+
+  .definicion__texto {
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.35);
+    margin: 0 1.4rem;
+    padding: 1.2rem 0 0;
+  }
+
+  .separador {
+    font-size: 0.9rem;
+    letter-spacing: 0.2em;
+    gap: 1rem;
+  }
+
+  .separador::before,
+  .separador::after {
+    width: 2rem;
+  }
+
+  .modos {
+    grid-template-columns: 1fr;
+    width: 100%;
+    max-width: 30.875rem;
+  }
+
+  .modo {
+    min-height: 0;
+  }
+
+  .modo__divisor {
+    width: auto;
+  }
+
+  .pie {
+    margin-top: 3rem;
+  }
+}

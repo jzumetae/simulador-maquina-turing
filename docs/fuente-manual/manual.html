@@ -1,0 +1,1037 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manual de usuario · Simulador de Máquina de Turing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<!--
+  Manual del proyecto final. Cada <section class="pagina"> es una hoja A4.
+  Los datos del grupo (integrantes, catedrático, sección y enlace del drive)
+  se escriben en DATOS, al final de este archivo.
+  Para volver a generar el PDF: ábrelo en Google Chrome, espera a que carguen
+  las fuentes → Imprimir → "Guardar como PDF", márgenes "Ninguno" y
+  "Gráficos de fondo" activado. (En esta computadora Edge sin ventana no
+  permite imprimir; el PDF se generó con Chrome.)
+-->
+<style>
+  :root {
+    --tinta: #16232f;
+    --tenue: #4d6072;
+    --marino: #0d2c47;
+    --azul: #1e486a;
+    --acero: #3e6888;
+    --cielo: #9fc0dc;
+    --claro: #eef3f7;
+    --linea: #cfd9e2;
+    --ambar: #c8902e;
+    --verde: #2f8a5f;
+    --serif: 'Libre Baskerville', Georgia, serif;
+    --texto: 'Source Serif 4', Georgia, serif;
+    --mono: 'JetBrains Mono', Consolas, monospace;
+  }
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #7d8a97;
+    color: var(--tinta);
+    font-family: var(--texto);
+    font-size: 10pt;
+    line-height: 1.45;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    counter-reset: pagina figura;
+  }
+  @media print { body { background: none; } }
+
+  /* ---------- Hoja ---------- */
+  .pagina {
+    position: relative;
+    width: 210mm;
+    height: 297mm;
+    margin: 8mm auto;
+    padding: 23mm 20mm 19mm;
+    background: #fff;
+    overflow: hidden;
+    break-after: page;
+    counter-increment: pagina;
+    box-shadow: 0 2mm 6mm rgba(0, 0, 0, .25);
+  }
+  @media print { .pagina { margin: 0; box-shadow: none; } }
+  .pagina:last-child { break-after: auto; }
+  .cuerpo { height: 255mm; overflow: hidden; }
+
+  .encabezado-pag {
+    position: absolute; top: 10mm; left: 20mm; right: 20mm;
+    display: flex; justify-content: space-between; align-items: baseline; gap: 8mm;
+    padding-bottom: 1.6mm; border-bottom: .25mm solid var(--linea);
+    font-family: var(--serif); font-size: 6.9pt; letter-spacing: .16em; text-transform: uppercase; color: var(--acero);
+  }
+  .pie-pag {
+    position: absolute; bottom: 9mm; left: 20mm; right: 20mm;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--serif); font-size: 7pt; letter-spacing: .12em; color: var(--acero);
+  }
+  .pie-pag::after {
+    content: counter(pagina);
+    font-family: var(--mono); font-size: 7.6pt; letter-spacing: 0; color: var(--marino);
+    border: .25mm solid var(--linea); border-radius: 3mm; padding: .3mm 2.4mm;
+  }
+
+  /* ---------- Títulos ---------- */
+  h2 {
+    display: flex; align-items: center; gap: 4mm;
+    margin: 0 0 5mm; padding-bottom: 3mm; border-bottom: .35mm solid var(--marino);
+    font-family: var(--serif); font-weight: 400; font-size: 17pt; letter-spacing: .02em; color: var(--marino);
+  }
+  h2 .num {
+    flex: none; display: grid; place-items: center; width: 10.5mm; height: 10.5mm; border-radius: 50%;
+    background: var(--marino); color: #fff; font-family: var(--mono); font-size: 9pt; letter-spacing: 0;
+  }
+  h3 {
+    margin: 5.5mm 0 2.2mm;
+    font-family: var(--serif); font-weight: 700; font-size: 9.6pt; letter-spacing: .1em; text-transform: uppercase; color: var(--azul);
+  }
+  h3 .num { color: var(--acero); font-family: var(--mono); font-weight: 400; margin-right: 1.6mm; letter-spacing: 0; }
+  h2 + h3 { margin-top: 0; }
+  h4 { margin: 3.5mm 0 1.2mm; font-family: var(--texto); font-weight: 700; font-size: 10.2pt; color: var(--marino); }
+
+  p { margin: 0 0 2.4mm; text-align: justify; hyphens: auto; }
+  ul, ol { margin: 0 0 2.6mm; padding-left: 5.5mm; }
+  li { margin-bottom: 1mm; }
+  li::marker { color: var(--acero); }
+  strong { font-weight: 700; color: var(--marino); }
+  em { color: var(--tinta); }
+  .ui { font-family: var(--texto); font-weight: 600; color: var(--azul); }
+  code, .mono, pre { font-variant-ligatures: none; }
+  code, .mono { font-family: var(--mono); font-size: .86em; color: var(--marino); background: var(--claro); padding: .1mm 1mm; border-radius: .8mm; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  .tal-cual { text-transform: none; letter-spacing: .02em; }
+  .dos-col p, .fila-figuras p { text-align: left; }
+  kbd {
+    display: inline-block; min-width: 4.6mm; padding: 0 1.2mm; text-align: center;
+    font-family: var(--mono); font-size: 7.6pt; line-height: 1.55; color: var(--marino);
+    border: .25mm solid #a9bccc; border-bottom-width: .6mm; border-radius: 1mm; background: #f7fafc;
+  }
+
+  /* ---------- Figuras ---------- */
+  figure { margin: 3mm 0 4mm; text-align: center; break-inside: avoid; }
+  figure img {
+    display: block; margin: 0 auto; max-width: 100%;
+    border-radius: 2mm; border: .25mm solid #b9c7d4; box-shadow: 0 .8mm 2.5mm rgba(13, 44, 71, .18);
+  }
+  figcaption {
+    counter-increment: figura;
+    margin-top: 2mm; font-size: 8.4pt; font-style: italic; line-height: 1.4; color: var(--tenue);
+  }
+  figcaption::before { content: 'Figura ' counter(figura) '. '; font-style: normal; font-weight: 700; color: var(--azul); }
+  .fila-figuras { display: flex; gap: 4mm; align-items: flex-start; }
+  .fila-figuras figure { flex: 1; margin-top: 1mm; }
+
+  /* ---------- Cajas ---------- */
+  .nota, .importante {
+    margin: 3mm 0; padding: 2.8mm 4mm; border-radius: 1.2mm; font-size: 9.4pt; break-inside: avoid;
+    background: var(--claro); border-left: 1.2mm solid var(--azul);
+  }
+  .importante { background: #fbf5ea; border-left-color: var(--ambar); }
+  .nota p:last-child, .importante p:last-child { margin-bottom: 0; }
+  .etiqueta { font-family: var(--serif); font-size: 7.4pt; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; color: var(--azul); margin-right: 1.5mm; }
+  .importante .etiqueta { color: #9a6a17; }
+
+  pre {
+    margin: 2.5mm 0 3.5mm; padding: 3.2mm 4mm; border-radius: 1.6mm;
+    background: var(--marino); color: #e3ecf4; font-family: var(--mono); font-size: 7.4pt; line-height: 1.5;
+    white-space: pre; overflow: hidden; break-inside: avoid;
+  }
+  pre .c { color: #8fb1cc; }
+  pre .k { color: #ffd58a; }
+
+  /* ---------- Tablas ---------- */
+  table { width: 100%; border-collapse: collapse; margin: 2.5mm 0 4mm; font-size: 9pt; break-inside: avoid; }
+  th {
+    background: var(--marino); color: #fff; text-align: left; vertical-align: bottom;
+    font-family: var(--serif); font-weight: 400; font-size: 7.4pt; letter-spacing: .1em; text-transform: uppercase;
+    padding: 1.8mm 2.4mm;
+  }
+  td { padding: 1.6mm 2.4mm; border-bottom: .25mm solid var(--linea); vertical-align: top; line-height: 1.4; }
+  tr:nth-child(even) td { background: #f6f9fb; }
+  td:first-child { font-weight: 600; color: var(--marino); }
+  .tabla-compacta td { padding: 1.2mm 2.2mm; font-size: 8.7pt; }
+
+  /* ---------- Índice ---------- */
+  .indice { list-style: none; padding: 0; margin: 0 0 6mm; }
+  .indice li { display: flex; align-items: baseline; gap: 2mm; margin: 0; padding: .45mm 0; line-height: 1.3; }
+  .indice li.n1 { font-family: var(--serif); font-size: 9.6pt; color: var(--marino); margin-top: 1.8mm; }
+  .indice li.n2 { padding-left: 9mm; font-size: 9pt; color: var(--tinta); }
+  .indice .puntos { flex: 1; border-bottom: .3mm dotted #9aaab8; transform: translateY(-1mm); }
+  .indice .pag { font-family: var(--mono); font-size: 8.4pt; color: var(--azul); min-width: 6mm; text-align: right; }
+  .indice .n { font-family: var(--mono); font-size: 8.4pt; color: var(--acero); min-width: 7mm; }
+
+  /* ---------- Campos para rellenar ---------- */
+  .rellenar { display: inline-block; min-width: 60mm; border-bottom: .3mm solid var(--tinta); color: var(--marino); font-weight: 600; }
+  .rellenar:empty::after { content: '\00a0'; }
+  .rellenar:not(:empty) { border-bottom-color: transparent; }
+  .grupo td .rellenar:not(:empty) { font-family: var(--texto); font-size: 10.4pt; }
+  .grupo td:last-child .rellenar:not(:empty), .grupo-final td:last-child .rellenar:not(:empty) { font-family: var(--mono); font-size: 9pt; font-weight: 400; }
+
+  /* ---------- Portada ---------- */
+  .portada { padding: 0; }
+  .portada .cabeza { display: flex; align-items: center; gap: 5mm; padding: 15mm 20mm 0; }
+  .portada .sello { width: 23mm; height: 23mm; object-fit: contain; }
+  .portada .universidad { font-family: var(--serif); font-size: 12pt; letter-spacing: .12em; text-transform: uppercase; color: var(--marino); line-height: 1.3; white-space: nowrap; }
+  .portada .universidad small { display: block; font-size: 7.4pt; letter-spacing: .3em; color: var(--acero); margin-top: 1.2mm; }
+  .portada .curso { margin-left: auto; max-width: 42mm; text-align: right; font-family: var(--serif); font-size: 8.8pt; color: var(--azul); line-height: 1.45; }
+  .portada .curso b { display: block; font-size: 7.4pt; letter-spacing: .18em; text-transform: uppercase; color: var(--acero); font-weight: 400; }
+  .portada .raya { height: .35mm; background: var(--marino); margin: 7mm 20mm 0; }
+
+  .portada .titulo-bloque { text-align: center; padding: 30mm 20mm 0; }
+  .portada .cabezal-portada { margin-top: 14mm; }
+  .grupo .rellenar, .grupo-final .rellenar { display: block; min-width: 0 !important; width: 100%; }
+  .portada .supra { font-family: var(--serif); font-size: 11pt; letter-spacing: .5em; color: var(--acero); text-transform: uppercase; }
+  .portada h1 { margin: 2mm 0 2mm; font-family: var(--serif); font-weight: 700; font-size: 37pt; line-height: 1.1; color: #081a2b; }
+  .portada .lema { font-family: var(--serif); font-size: 8.6pt; letter-spacing: .4em; color: var(--acero); text-transform: uppercase; }
+  .portada .subtitulo { margin-top: 8mm; font-family: var(--serif); font-style: italic; font-size: 13pt; color: var(--azul); }
+  .portada .proyecto { margin-top: 2mm; font-family: var(--mono); font-size: 9pt; letter-spacing: .14em; color: var(--marino); }
+
+  .cinta-portada { display: flex; justify-content: center; margin: 12mm auto 0; position: relative; width: max-content; }
+  .cinta-portada span {
+    width: 13mm; height: 13mm; display: grid; place-items: center;
+    border: .4mm solid var(--marino); margin-left: -.4mm; background: #fff;
+    font-family: var(--serif); font-size: 14pt; color: var(--marino);
+  }
+  .cinta-portada span.b { color: #8aa3b8; }
+  .cinta-portada span.cab { background: var(--marino); color: #fff; }
+  .cinta-portada::before, .cinta-portada::after { content: ''; position: absolute; top: 50%; width: 16mm; border-top: .3mm dashed var(--acero); }
+  .cinta-portada::before { right: 100%; margin-right: 2mm; }
+  .cinta-portada::after { left: 100%; margin-left: 2mm; }
+  .cabezal-portada { text-align: center; font-family: var(--serif); font-style: italic; color: var(--marino); font-size: 11pt; margin-top: 5mm; line-height: 1; }
+  .cabezal-portada i { display: block; width: 0; height: 0; margin: 1mm auto 0; border-left: 2.2mm solid transparent; border-right: 2.2mm solid transparent; border-top: 3mm solid var(--marino); }
+
+  .grupo { margin: 20mm 20mm 0; }
+  .grupo table { margin: 0; }
+  .grupo td { height: 9mm; vertical-align: middle; }
+  .grupo td:first-child { width: 12mm; text-align: center; font-family: var(--mono); color: var(--acero); font-weight: 400; }
+  .grupo td:last-child { width: 42mm; }
+  .datos-portada { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm 8mm; margin: 6mm 20mm 0; font-size: 9.6pt; }
+  .datos-portada .rellenar { min-width: 0; flex: 1; }
+  .datos-portada div { display: flex; gap: 2mm; align-items: baseline; }
+  .drive {
+    margin: 6mm 20mm 0; padding: 3.5mm 4.5mm; border: .4mm solid var(--marino); border-radius: 1.5mm;
+    display: flex; gap: 3mm; align-items: baseline; font-size: 10pt;
+  }
+  .drive .etiqueta-drive { font-family: var(--serif); font-weight: 700; letter-spacing: .12em; color: var(--marino); white-space: nowrap; font-size: 9pt; }
+  .drive .rellenar { flex: 1; min-width: 0; font-family: var(--mono); font-size: 8.4pt; font-weight: 400; word-break: break-all; }
+  .portada .banda {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 24mm;
+    background: linear-gradient(100deg, #0a243b 0%, #1e486a 62%, #3e6888 100%);
+    color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 20mm;
+    font-family: var(--serif); font-size: 9pt; letter-spacing: .18em; text-transform: uppercase;
+  }
+  .portada .banda .bits { font-family: var(--mono); letter-spacing: .3em; color: var(--cielo); font-size: 8pt; }
+
+  /* ---------- Varios ---------- */
+  .dos-col { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; }
+  .arbol { font-size: 7.3pt; }
+  .leyenda-num { counter-reset: ley; list-style: none; padding-left: 0; }
+  .leyenda-num li { counter-increment: ley; position: relative; padding-left: 7mm; }
+  .leyenda-num li::before {
+    content: counter(ley); position: absolute; left: 0; top: .5mm; width: 4.6mm; height: 4.6mm; border-radius: 50%;
+    background: var(--azul); color: #fff; font-family: var(--mono); font-size: 6.8pt; display: grid; place-items: center;
+  }
+  .ok { color: var(--verde); font-weight: 700; }
+  .chico { font-size: 8.8pt; color: var(--tenue); }
+</style>
+</head>
+<body>
+
+<!-- =====================================================================
+     PORTADA
+     ===================================================================== -->
+<section class="pagina portada">
+  <div class="cabeza">
+    <img class="sello" src="img/sello-umg.png" alt="Sello de la Universidad Mariano Gálvez">
+    <div class="universidad">Universidad Mariano Gálvez<small>de Guatemala</small></div>
+    <div class="curso"><b>Curso</b>Autómatas y lenguajes formales</div>
+  </div>
+  <div class="raya"></div>
+
+  <div class="titulo-bloque">
+    <div class="supra">Simulador</div>
+    <h1>Máquina de Turing</h1>
+    <div class="lema">Simula · Explora · Aprende</div>
+    <div class="subtitulo">Manual de usuario y descripción del proyecto</div>
+    <div class="proyecto">PROYECTO FINAL 2026</div>
+  </div>
+
+  <div class="cabezal-portada">q<sub>0</sub><i></i></div>
+  <div class="cinta-portada" style="margin-top: 1.5mm">
+    <span class="b">B</span><span class="cab">0</span><span>0</span><span>1</span><span>1</span><span class="b">B</span><span class="b">B</span>
+  </div>
+
+  <div class="grupo">
+    <table>
+      <thead><tr><th>No.</th><th>Nombre completo del integrante</th><th>Carné</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><span class="rellenar" data-campo="nombre1"></span></td><td><span class="rellenar" style="min-width: 32mm" data-campo="carne1"></span></td></tr>
+        <tr><td>2</td><td><span class="rellenar" data-campo="nombre2"></span></td><td><span class="rellenar" style="min-width: 32mm" data-campo="carne2"></span></td></tr>
+        <tr><td>3</td><td><span class="rellenar" data-campo="nombre3"></span></td><td><span class="rellenar" style="min-width: 32mm" data-campo="carne3"></span></td></tr>
+        <tr><td>4</td><td><span class="rellenar" data-campo="nombre4"></span></td><td><span class="rellenar" style="min-width: 32mm" data-campo="carne4"></span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="datos-portada">
+    <div>Catedrático: <span class="rellenar" data-campo="catedratico"></span></div>
+    <div>Sección: <span class="rellenar" data-campo="seccion"></span></div>
+  </div>
+
+  <div class="drive">
+    <span class="etiqueta-drive">ENLACE DEL DRIVE:</span>
+    <span class="rellenar" data-campo="drive"></span>
+  </div>
+
+  <div class="banda">
+    <span>Guatemala, noviembre de 2026</span>
+    <span class="bits">0100110 · 1100101</span>
+  </div>
+</section>
+
+<!-- =====================================================================
+     ÍNDICE
+     ===================================================================== -->
+<section class="pagina">
+  <div class="encabezado-pag"><span>Simulador de Máquina de Turing</span><span>Manual de usuario</span></div>
+  <div class="cuerpo">
+    <h2>Contenido</h2>
+    <ol class="indice" id="indice"></ol>
+
+    <div class="nota">
+      <p><span class="etiqueta">Entrega</span>Este documento es el manual de usuario y la descripción de lo realizado para el proyecto final. El código fuente completo se guarda en el drive compartido del grupo; el enlace está en la portada y en la sección 7.</p>
+    </div>
+  </div>
+  <div class="pie-pag"><span>Universidad Mariano Gálvez · Proyecto final 2026</span></div>
+</section>
+
+<!-- =====================================================================
+     1. INTRODUCCIÓN  ·  2. CÓMO EJECUTAR
+     ===================================================================== -->
+<section class="pagina">
+  <div class="encabezado-pag"><span>Simulador de Máquina de Turing</span><span>Manual de usuario</span></div>
+  <div class="cuerpo">
+    <h2 data-toc="1"><span class="num">01</span>Introducción</h2>
+
+    <p>El <strong>Simulador de Máquina de Turing</strong> es una aplicación web que permite definir una máquina de Turing determinista <span class="mono">M = (Q, Σ, Γ, δ, q₀, B, F)</span> y observar cómo procesa una palabra sobre una cinta de 50 celdas. Cumple con las dos formas de operación que pide la guía del proyecto:</p>
+    <ul>
+      <li><strong>Modo 1 · Ejecución automática (simulación gráfica).</strong> Se crea una configuración nueva o se carga una guardada, y la máquina ejecuta sus transiciones sola: se ve la cinta, el cabezal, el diagrama de estados y el historial de la terna instantánea (estado, contenido, posición), con control de velocidad en milisegundos.</li>
+      <li><strong>Modo 2 · Ejecución manual o modo depuración (sandbox).</strong> El usuario hace el papel de la función δ: en cada paso decide si cambia el símbolo de la celda, a qué estado pasa y si mueve el cabezal a la derecha (D), a la izquierda (I) o no lo mueve (S). Todo queda registrado y se convierte en una configuración que se puede ejecutar en el Modo 1.</li>
+    </ul>
+
+    <h3 data-toc="2"><span class="num">1.1</span>Qué se necesita</h3>
+    <table class="tabla-compacta">
+      <thead><tr><th style="width: 34%">Requisito</th><th>Detalle</th></tr></thead>
+      <tbody>
+        <tr><td>Sistema operativo</td><td>Windows 10 u 11. El servidor local usa PowerShell, que ya viene con Windows: no hay que instalar nada.</td></tr>
+        <tr><td>Navegador</td><td>Microsoft Edge, Google Chrome o Firefox en una versión reciente.</td></tr>
+        <tr><td>Internet</td><td>Opcional. Solo se usa para descargar las fuentes tipográficas; sin conexión el simulador funciona igual con fuentes del sistema.</td></tr>
+        <tr><td>Código fuente</td><td>La carpeta del proyecto, descargada del drive compartido (sección 7).</td></tr>
+      </tbody>
+    </table>
+
+    <h2 data-toc="1" style="margin-top: 6mm"><span class="num">02</span>Cómo ejecutar el simulador</h2>
+
+    <h3 data-toc="2"><span class="num">2.1</span>Forma recomendada: INICIAR.bat</h3>
+    <ol>
+      <li>Abre la carpeta del proyecto <span class="mono">PROYECTO AUTÓMATAS</span>.</li>
+      <li>Haz doble clic en <strong>INICIAR.bat</strong>. Se abre una ventana negra (el servidor local) y, enseguida, el navegador en el menú principal: <span class="mono">http://localhost:5577</span>.</li>
+      <li>Deja la ventana negra abierta mientras usas el simulador. Para terminar, ciérrala o presiona <kbd>Ctrl</kbd> + <kbd>C</kbd> dentro de ella.</li>
+    </ol>
+    <pre>  ==================================================
+   Simulador · Máquina de Turing
+  ==================================================
+
+   Abierto en:  <span class="k">http://localhost:5577/</span>
+   Carpeta:     D:\Downloads\PROYECTO AUTÓMATAS\
+
+   Deja esta ventana abierta mientras usas el simulador.
+   Para detenerlo, cierra la ventana o presiona Ctrl+C.</pre>
+    <p class="chico">Ventana del servidor (<span class="mono">herramientas/servidor.ps1</span>). Si el 5577 está ocupado, prueba solo el 5578, 5579, … y muestra la dirección abierta.</p>
+  </div>
+  <div class="pie-pag"><span>Universidad Mariano Gálvez · Proyecto final 2026</span></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="pagina">
+  <div class="encabezado-pag"><span>Simulador de Máquina de Turing</span><span>Manual de usuario</span></div>
+  <div class="cuerpo">
+    <h3 data-toc="2"><span class="num">2.2</span>Alternativa: VS Code con Live Server</h3>
+    <ol>
+      <li>Abre la carpeta del proyecto en Visual Studio Code (<span class="ui">Archivo → Abrir carpeta</span>).</li>
+      <li>Haz clic derecho sobre <span class="mono">index.html</span> y elige <span class="ui">Open with Live Server</span>.</li>
+      <li>El navegador se abre en <span class="mono">http://127.0.0.1:5510</span>. El puerto ya está configurado en <span class="mono">.vscode/settings.json</span>.</li>
+    </ol>
+
+    <h3 data-toc="2"><span class="num">2.3</span>Por qué no se usa el puerto 5500</h3>
+    <p>Live Server usa el puerto <strong>5500</strong> por defecto. En la computadora donde se desarrolló el proyecto ese puerto ya lo ocupa el servicio <strong>tnslsnr</strong> de Oracle Database (el <em>listener</em>, que abre <span class="mono">127.0.0.1:5500</span> para la consola web de Oracle), así que Live Server no podía abrir su servidor y la página no cargaba. Por eso INICIAR.bat usa el <strong>5577</strong> (y prueba los siguientes si está ocupado) y Live Server quedó configurado en el <strong>5510</strong>.</p>
+
+    <div class="importante">
+      <p><span class="etiqueta">Importante</span>No abras los archivos <span class="mono">.html</span> con doble clic (dirección <span class="mono">file://</span>). Las pantallas comparten los datos de la máquina mediante el almacenamiento del navegador (<span class="mono">sessionStorage</span> y <span class="mono">localStorage</span>), y algunos navegadores lo bloquean en archivos sueltos. Usa siempre INICIAR.bat o Live Server.</p>
+    </div>
+
+    <h2 data-toc="1" style="margin-top: 7mm"><span class="num">03</span>Menú principal</h2>
+    <p>Es la primera pantalla. Muestra la definición del proyecto y las dos tarjetas para elegir el modo de ejecución. La cinta de la tarjeta superior es decorativa: el cabezal la recorre de un lado a otro.</p>
+    <figure>
+      <img src="img/01-menu.jpg" style="width: 118mm" alt="Menú principal">
+      <figcaption>Menú principal del simulador.</figcaption>
+    </figure>
+    <ul>
+      <li><span class="ui">Ejecución automática</span> abre el <strong>Modo 1</strong> (sección 4).</li>
+      <li><span class="ui">Ejecución manual</span> abre el <strong>Modo 2</strong> (sección 5).</li>
+      <li><span class="ui">Salir</span> pide confirmación y cierra la pestaña. Si el navegador no permite cerrarla (solo se pueden cerrar por código las pestañas abiertas por un script), aparece el aviso <em>«Ya puedes cerrar esta pestaña»</em>.</li>
+    </ul>
+  </div>
+  <div class="pie-pag"><span>Universidad Mariano Gálvez · Proyecto final 2026</span></div>
+</section>
+
+<!-- =====================================================================
+     4. MODO 1
+     ===================================================================== -->
+<section class="pagina">
+  <div class="encabezado-pag"><span>Simulador de Máquina de Turing</span><span>Modo 1 · Ejecución automática</span></div>
+  <div class="cuerpo">
+    <h2 data-toc="1"><span class="num">04</span>Modo 1 · Ejecución automática</h2>
+    <h3 data-toc="2"><span class="num">4.1</span>Pantalla de inicio del Modo 1</h3>
+    <p>Al entrar, el simulador pregunta cómo se desea iniciar. Las opciones están agrupadas igual que en la guía:</p>
+    <ul>
+      <li><strong>Opción 1 · Configuración.</strong> <span class="ui">Nueva configuración</span> abre el formulario vacío para definir la máquina (4.2). <span class="ui">Cargar configuración</span> permite buscar y seleccionar una máquina guardada antes, en un archivo <span class="mono">.json</span> (4.3).</li>
+      <li><strong>Opción 2 · Ejecución.</strong> <span class="ui">Ejecutar</span> abre la simulación gráfica (4.4). Mientras no haya una configuración cargada la tarjeta aparece gris, con un candado; si se presiona, el simulador avisa: <em>«Primero debes configurar la máquina: crea una nueva configuración o carga una guardada.»</em> Así se cumple la nota de la guía: <strong>no se puede ejecutar sin haber configurado antes</strong>.</li>
+    </ul>
+    <figure>
+      <img src="img/02-modo1-inicio.jpg" style="width: 122mm" alt="Inicio del Modo 1 sin configuración">
+      <figcaption>Inicio del Modo 1 sin configuración: la Opción 2 está bloqueada.</figcaption>
+    </figure>
+    <figure>
+      <img src="img/04-modo1-cargada.jpg" style="width: 122mm" alt="Inicio del Modo 1 con una configuración cargada">
+      <figcaption>Después de cargar una configuración, «Ejecutar» se activa y muestra un resumen: estados, transiciones y palabra w.</figcaption>
+    </figure>
+  </div>
+  <div class="pie-pag"><span>Universidad Mariano Gálvez · Proyecto final 2026</span></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="pagina">
+  <div class="encabezado-pag"><span>Simulador de Máquina de Turing</span><span>Modo 1 · Ejecución automática</span></div>
+  <div class="cuerpo">
+    <h3 data-toc="2"><span class="num">4.2</span>Nueva configuración: <span class="tal-cual">M = (Q, Σ, Γ, δ, q₀, B, F)</span></h3>
+    <p>El formulario pide, en cinco secciones numeradas, todos los componentes formales de la máquina. Cada sección muestra debajo del campo cómo quedó el conjunto (por ejemplo <span class="mono">Q = { q0, q1, q2 } |Q| = 3</span>) y marca en rojo lo inválido o repetido. Con <span class="ui">Usar ejemplo</span> se llena con la máquina que reconoce el lenguaje 0ⁿ1ⁿ, útil para probar.</p>
+    <div class="dos-col">
+      <figure style="margin-top: 0">
+        <img src="img/03a-form-q-sigma.jpg" alt="Secciones 01 y 02 del formulario">
+        <figcaption>Secciones 01 (estados) y 02 (alfabetos).</figcaption>
+      </figure>
+      <div>
+        <h4>01 · Estados (Q)</h4>
+        <p>Escribe los estados separados por comas, por ejemplo <span class="mono">q0, q1, q2, q3, q4</span>. Los nombres solo pueden tener letras, números o guion bajo, y no se pueden repetir.</p>
+        <h4>02 · Alfabetos (Σ y Γ)</h4>
+        <p><strong>Σ</strong> es el alfabeto de entrada y <strong>Γ</strong> el alfabeto de la cinta. Cada símbolo es un solo carácter y se separa con comas.</p>
+        <ul>
+          <li>El <strong>símbolo blanco</strong> siempre es <span class="mono">B</span>: no se edita; el botón con la <span class="mono">B</span> confirma que está en Γ.</li>
+          <li>Γ debe contener a Σ y a <span class="mono">B</span>. El botón <span class="ui">+ Σ y B</span> los agrega solos; después se suman los símbolos auxiliares, como <span class="mono">X</span> o <span class="mono">Y</span>.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="dos-col" style="margin-top: 2mm">
+      <div>
+        <h4>03 · Estado inicial y finales</h4>
+        <p>Con los estados escritos aparecen como botones. Se elige <strong>un</strong> estado inicial q₀ y <strong>uno o varios</strong> estados finales F (donde la máquina acepta la palabra).</p>
+        <h4>04 · Función de transición (δ)</h4>
+        <p>Cada fila es <strong>δ(q<sub>i</sub>, X) = (q<sub>j</sub>, Y, D)</strong>: en el estado q<sub>i</sub>, si lee X, pasa a q<sub>j</sub>, escribe Y y se mueve D. Las opciones salen de Q y de Γ, y el movimiento es <span class="mono">R</span> (derecha), <span class="mono">L</span> (izquierda) o <span class="mono">S</span> (quedarse).</p>
+        <ul>
+          <li><span class="ui">Agregar transición</span> añade una fila; el ícono de basurero la elimina.</li>
+          <li>El conteo de la derecha indica cuántas transiciones hay.</li>
+          <li>Si se repite un par (q<sub>i</sub>, X) el formulario lo marca: la máquina debe ser determinista.</li>
+        </ul>
+      </div>
+      <figure style="margin-top: 0">
+        <img src="img/03b-form-q0-delta.jpg" alt="Secciones 03 y 04 del formulario, vista de lista">
+        <figcaption>Secciones 03 y 04: δ en vista de lista.</figcaption>
+      </figure>
+    </div>
+  </div>
+  <div class="pie-pag"><span>Universidad Mariano Gálvez · Proyecto final 2026</span></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="pagina">
+  <div class="encabezado-pag"><span>Simulador de Máquina de Turing</span><span>Modo 1 · Ejecución automática</span></div>
+  <div class="cuerpo">
+    <h4 style="margin-top: 0">Vista de tabla (matriz de transiciones)</h4>
+    <p>El botón <span class="ui">Tabla</span> muestra δ como una matriz: filas = estados, columnas = símbolos de Γ. La flecha <span class="mono">→</span> marca el estado inicial, el asterisco <span class="mono">*</span> los finales y la raya <span class="mono">—</span> las combinaciones sin transición (ahí la máquina se detiene). Haciendo clic en una celda se edita esa transición. Las dos vistas muestran los mismos datos.</p>
+    <figure>
+      <img src="img/03d-form-tabla.jpg" style="width: 126mm" alt="Vista de tabla de la función de transición">
+      <figcaption>La misma función δ en vista de tabla.</figcaption>
+    </figure>
+
+    <h4>05 · Palabra de entrada</h4>
+    <p>Es la cadena que se coloca en la cinta de 50 celdas <strong>a partir de la celda 1</strong> (la celda 0 queda en blanco), con un máximo de 49 símbolos. Vacía equivale a la palabra vacía ε; una <span class="mono">B</span> deja una celda en blanco. A la derecha se ve cómo iniciará la cinta y dónde queda el cabezal.</p>
+    <figure>
+      <img src="img/03c-form-palabra.jpg" style="width: 128mm" alt="Sección 05, palabra de entrada">
+      <figcaption>Sección 05: la palabra 0011 y la vista previa de la cinta.</figcaption>
+    </figure>
+
+    <h4>Revisar y guardar</h4>
+    <p>La última sección resume la máquina en notación formal. Se le puede dar un nombre (opcional), que también define el nombre del archivo. Al presionar <span class="ui">Guardar configuración</span>:</p>
+    <ul>
+      <li>Si todo es válido, la configuración <strong>se guarda</strong>: se descarga un archivo <span class="mono">.json</span> (a la carpeta de Descargas del navegador) y queda lista en la pestaña. Aparecen los botones <span class="ui">Iniciar simulación</span> y <span class="ui">Descargar otra vez</span>. Así se cumple que una configuración nueva quede guardada para usarla después.</li>
+      <li>Si hay errores, se listan con el número de la sección donde están (figura 9) y no se guarda nada.</li>
+    </ul>
+    <p><span class="ui">Limpiar</span> vacía el formulario y <span class="ui">Volver</span> regresa al inicio del Modo 1.</p>
+  </div>
+  <div class="pie-pag"><span>Universidad Mariano Gálvez · Proyecto final 2026</span></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="pagina">
+  <div class="encabezado-pag"><span>Simulador de Máquina de Turing</span><span>Modo 1 · Ejecución automática</span></div>
+  <div class="cuerpo">
+    <div class="fila-figuras">
+      <figure>
+        <img src="img/03e-form-guardado.jpg" alt="Configuración válida y guardada">
+        <figcaption>Configuración válida: se descargó <span class="mono">lenguaje-0n1n.json</span>.</figcaption>
+      </figure>
+      <figure>
+        <img src="img/03f-form-errores.jpg" alt="Errores al intentar guardar">
+        <figcaption>Datos por corregir, con el número de sección de cada uno.</figcaption>
+      </figure>
+    </div>
+
+    <h3 data-toc="2"><span class="num">4.3</span>Cargar una configuración guardada</h3>
+    <ol>
+      <li>En el inicio del Modo 1 presiona <span class="ui">Cargar configuración</span>. Se abre el explorador de archivos para buscar la máquina; también se puede <strong>arrastrar</strong> el archivo y soltarlo sobre la tarjeta.</li>
+      <li>Elige un archivo <span class="mono">.json</span>: uno guardado desde el formulario, uno exportado desde el Modo 2 o el ejemplo <span class="mono">ejemplos/ejemplo-0n1n.json</span>.</li>
+      <li>El archivo se revisa con las mismas reglas del formulario. Si es válido aparece el aviso <em>«… cargada. Ya puedes ejecutarla.»</em> y la Opción 2 se activa (figura 3). Si tiene un error, el aviso explica cuál es.</li>
+    </ol>
+
+    <h3 data-toc="2"><span class="num">4.4</span>Pantalla de simulación</h3>
+    <p>Al presionar <span class="ui">Ejecutar</span> (o <span class="ui">Iniciar simulación</span> desde el formulario) se abre la simulación gráfica. Arriba aparece el nombre de la máquina y el selector <span class="ui">Automática</span> / <span class="ui">Paso a paso</span>.</p>
+    <figure>
+      <img src="img/05a-sim-lista.jpg" style="width: 138mm" alt="Pantalla de simulación lista para iniciar">
+      <figcaption>Simulación lista para iniciar con la máquina 0ⁿ1ⁿ y la palabra 0011.</figcaption>
+    </figure>
+  </div>
+  <div class="pie-pag"><span>Universidad Mariano Gálvez · Proyecto final 2026</span></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="pagina">
+  <div class="encabezado-pag"><span>Simulador de Máquina de Turing</span><span>Modo 1 · Ejecución automática</span></div>
+  <div class="cuerpo">
+    <p>La pantalla se divide en cinco paneles:</p>
+    <ol class="leyenda-num">
+      <li><strong>Diagrama de estados.</strong> Se dibuja solo a partir de δ. La flecha de entrada marca q₀, el doble círculo los estados finales y cada arista lleva la etiqueta <span class="mono">a/b,M</span> (lee <em>a</em>, escribe <em>b</em>, mueve <em>M</em>). El estado actual se ilumina y, al aplicar un paso, una ficha recorre la flecha usada. Abajo está la definición formal: Q, Σ, Γ y F.</li>
+      <li><strong>Estado de la máquina.</strong> Estado actual, símbolo leído, posición del cabezal, número de pasos y resultado (<em>Lista para iniciar, En ejecución, En pausa, Aceptada…</em>).</li>
+      <li><strong>Historial de configuración.</strong> Cumple el punto 4 de la guía: en tiempo real agrega una fila por paso con la <strong>terna instantánea (Estado actual, Contenido, Posición)</strong>; en el contenido se resalta la celda del cabezal. La pestaña <span class="ui">Transiciones δ</span> lista la función y resalta la que se aplicará.</li>
+      <li><strong>Cinta.</strong> Las 50 celdas (0 a 49) con su número. La palabra empieza en la celda 1. El <strong>cabezal</strong> es la celda con borde iluminado, con una etiqueta encima que dice el estado actual. Con el campo <span class="ui">Palabra de entrada</span> y <span class="ui">Escribir en la cinta</span> se prueba otra palabra sin volver al formulario.</li>
+      <li><strong>Controles.</strong> Reiniciar, ejecutar o avanzar paso a paso, la explicación en palabras de cada paso y el control de velocidad.</li>
+    </ol>
+
+    <h3 data-toc="2"><span class="num">4.5</span>Ejecución automática y control de velocidad</h3>
+    <ul>
+      <li><span class="ui">Ejecutar</span> inicia la simulación. El mismo botón cambia a <span class="ui">Pausar</span> mientras corre, a <span class="ui">Reanudar</span> cuando está en pausa y a <span class="ui">Repetir</span> al terminar. También funciona con la barra espaciadora.</li>
+      <li><strong>Tiempo por paso:</strong> los milisegundos entre un paso y el siguiente, de <strong>100 ms</strong> (rápido) a <strong>3000 ms</strong> (lento); empieza en 900 ms. Se ajusta con la barra o escribiendo el número, incluso mientras la máquina corre.</li>
+      <li><span class="ui">Reiniciar</span> (tecla <kbd>R</kbd>) regresa la cinta y el cabezal a la configuración inicial.</li>
+      <li>Cada paso se anima en cuatro momentos: se ilumina la celda leída, aparece el símbolo escrito, el cabezal se desplaza y se marca el nuevo estado. Debajo, un texto explica el paso, por ejemplo: <em>«Paso 8 · δ(q₁, 1) = (q₂, Y, L). Estaba en q₁ y leyó 1: escribió Y, movió el cabezal a la izquierda y pasó a q₂.»</em></li>
+    </ul>
+    <figure>
+      <img src="img/05b-sim-pausa.jpg" style="width: 136mm" alt="Simulación en pausa">
+      <figcaption>Simulación en pausa en el paso 8, a 400 ms por paso; el historial muestra la terna de cada paso.</figcaption>
+    </figure>
+  </div>
+  <div class="pie-pag"><span>Universidad Mariano Gálvez · Proyecto final 2026</span></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="pagina">
+  <div class="encabezado-pag"><span>Simulador de Máquina de Turing</span><span>Modo 1 · Ejecución automática</span></div>
+  <div class="cuerpo">
+    <h3 data-toc="2" style="margin-top: 0"><span class="num">4.6</span>Paso a paso</h3>
+    <p>Con <span class="ui">Paso a paso</span> la máquina avanza solo cuando el usuario lo pide: <span class="ui">Siguiente</span> (<kbd>→</kbd> o <kbd>Espacio</kbd>) aplica una transición y <span class="ui">Anterior</span> (<kbd>←</kbd>) regresa al paso previo. Debajo de la explicación aparece cuál será la siguiente transición, por ejemplo <span class="mono">Siguiente: δ(q0, 0) = (q1, X, R)</span>.</p>
+    <figure>
+      <img src="img/06-sim-pasos.jpg" style="width: 126mm" alt="Simulación paso a paso">
+      <figcaption>Modo paso a paso, después del paso 5.</figcaption>
+    </figure>
+
+    <h3 data-toc="2"><span class="num">4.7</span>Resultados posibles</h3>
+    <div class="dos-col" style="grid-template-columns: 1.45fr 1fr; align-items: start">
+      <table class="tabla-compacta" style="margin-top: 0">
+        <thead><tr><th>Resultado</th><th>Cuándo ocurre</th></tr></thead>
+        <tbody>
+          <tr><td>Aceptada</td><td>La máquina entra a un estado final de F.</td></tr>
+          <tr><td>Rechazada</td><td>No hay transición para el par (estado, símbolo) y el estado actual no es final.</td></tr>
+          <tr><td>Fuera de la cinta</td><td>Una transición intenta mover el cabezal fuera de las celdas 0 a 49.</td></tr>
+          <tr><td>Sin detenerse</td><td>Llega a 2000 pasos sin parar (por ejemplo, un ciclo infinito).</td></tr>
+        </tbody>
+      </table>
+      <figure style="margin: 0">
+        <img src="img/06b-sim-delta.jpg" alt="Pestaña Transiciones δ">
+        <figcaption>Pestaña «Transiciones δ» con la siguiente transición resaltada.</figcaption>
+      </figure>
+    </div>
+    <figure>
+      <img src="img/05c-sim-aceptada.jpg" style="width: 104mm" alt="Palabra aceptada">
+      <figcaption>Fin de la ejecución: 0011 es aceptada en 13 pasos y el diagrama marca «Palabra aceptada».</figcaption>
+    </figure>
+  </div>
+  <div class="pie-pag"><span>Universidad Mariano Gálvez · Proyecto final 2026</span></div>
+</section>
+
+<!-- =====================================================================
+     5. MODO 2
+     ===================================================================== -->
+<section class="pagina">
+  <div class="encabezado-pag"><span>Simulador de Máquina de Turing</span><span>Modo 2 · Ejecución manual</span></div>
+  <div class="cuerpo">
+    <h2 data-toc="1"><span class="num">05</span>Modo 2 · Ejecución manual (sandbox)</h2>
+    <p>En este modo no se escribe la función δ: <strong>se construye paso a paso</strong> con las decisiones del usuario. Tiene dos pantallas: la <strong>preparación</strong> (alfabeto, estados y cinta inicial) y el <strong>sandbox</strong>, donde se ejecuta a mano.</p>
+
+    <h3 data-toc="2"><span class="num">5.1</span>Preparación de la máquina y la cinta</h3>
+    <div class="dos-col" style="grid-template-columns: 1fr 1fr">
+      <figure style="margin-top: 0">
+        <img src="img/07a-manual-alfabeto-estados.jpg" alt="Secciones 01 y 02 de la preparación del Modo 2">
+        <figcaption>Secciones 01 (alfabeto) y 02 (estados).</figcaption>
+      </figure>
+      <div>
+        <h4 style="margin-top: 0">01 · Alfabeto</h4>
+        <ul>
+          <li><strong>Alfabeto a utilizar Σ:</strong> los símbolos separados por comas. Con ellos se llena la cinta y son las opciones al cambiar una celda.</li>
+          <li><strong>Símbolo blanco:</strong> <span class="mono">^</span> (□ = ^), incluido por defecto.</li>
+          <li><strong>Símbolos auxiliares (opcional):</strong> símbolos extra, como <span class="mono">X</span>, que solo se escriben durante la ejecución. La línea de abajo muestra el alfabeto de la cinta resultante, por ejemplo <span class="mono" style="white-space: nowrap">Γ = { 0, 1, X, ^ }</span>.</li>
+        </ul>
+        <h4>02 · Estados</h4>
+        <ul>
+          <li><strong>Conjunto de estados Q</strong>, separados por comas.</li>
+          <li><strong>Estado inicial q₀</strong>.</li>
+          <li><strong>Estado final (meta) q<sub>f</sub>:</strong> el estado al que el usuario debe llegar; al llegar a él la ejecución termina. También se puede terminar antes con <strong>S</strong> (estado de paro).</li>
+        </ul>
+        <p class="chico">Así se cumple el punto 2 de la guía: se determina el estado final o se puede quedar en estado de paro y finalizar.</p>
+      </div>
+    </div>
+
+    <h4>03 · Cinta inicial (llenado al azar)</h4>
+    <p>La cinta tiene 50 celdas (0 a 49) y el cabezal empieza en la celda 1, igual que en el Modo 1. Hay tres formas de llenarla:</p>
+    <ul>
+      <li><strong>Llenar al azar:</strong> escribe cuántas celdas llenar (de 1 a 49, por defecto 10) y presiona <span class="ui">Llenar</span>. Se usan los símbolos de Σ y, si la casilla <span class="ui">Incluir el blanco ^</span> está marcada, también el blanco. Es el llenado <em>random</em> que pide la guía.</li>
+      <li><strong>Escribir el contenido</strong> desde la celda 1 (solo símbolos de Σ y <span class="mono">^</span>) y presionar <span class="ui">Escribir</span>. <span class="ui">Vaciar</span> deja toda la cinta en blanco.</li>
+      <li><strong>Tocar una celda</strong> para cambiarla: pasa por <span class="mono">^</span> y los símbolos de Σ. La celda 0 siempre empieza en blanco.</li>
+    </ul>
+  </div>
+  <div class="pie-pag"><span>Universidad Mariano Gálvez · Proyecto final 2026</span></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="pagina">
+  <div class="encabezado-pag"><span>Simulador de Máquina de Turing</span><span>Modo 2 · Ejecución manual</span></div>
+  <div class="cuerpo">
+    <p>Debajo de la cinta se resume su contenido: qué celdas ocupa y cuántos blancos quedaron en medio. En <strong>Cintas grabadas</strong> aparecen las cintas guardadas con <span class="ui">Grabar cinta</span> durante una ejecución (5.6), para usarlas como cinta inicial; <span class="ui">Abrir archivo</span> carga una cinta grabada que se haya descargado como <span class="mono">.json</span>.</p>
+    <figure>
+      <img src="img/07b-manual-cinta.jpg" style="width: 146mm" alt="Sección 03, cinta inicial llenada al azar">
+      <figcaption>Cinta llenada al azar: 10 celdas con {0, 1, ^}.</figcaption>
+    </figure>
+
+    <h4>Revisar y comenzar</h4>
+    <p>Resume la máquina como M = (Q, Σ, Γ, δ, q₀, ^, {q<sub>f</sub>}); δ queda pendiente porque se construye en el sandbox. Se puede poner un nombre a la sesión, que será el nombre del archivo al exportar. <span class="ui">Restablecer</span> vuelve a los valores iniciales y <span class="ui">Comenzar ejecución</span> revisa los datos y abre el sandbox. Si ya había una ejecución en curso, el simulador avisa antes de reemplazarla.</p>
+    <figure>
+      <img src="img/07c-manual-comenzar.jpg" style="width: 116mm" alt="Revisar y comenzar">
+      <figcaption>Sección final de la preparación: la sesión se llamará «Marcar ceros».</figcaption>
+    </figure>
+  </div>
+  <div class="pie-pag"><span>Universidad Mariano Gálvez · Proyecto final 2026</span></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="pagina">
+  <div class="encabezado-pag"><span>Simulador de Máquina de Turing</span><span>Modo 2 · Ejecución manual</span></div>
+  <div class="cuerpo">
+    <h3 data-toc="2" style="margin-top: 0"><span class="num">5.2</span>Pantalla del sandbox</h3>
+    <p>Arriba está el nombre de la sesión y la meta (<em>«Meta: llegar a q₃ o detenerte con S (paro)»</em>). La pantalla reúne todo lo necesario para ejecutar a mano:</p>
+    <figure>
+      <img src="img/08b-sandbox-medio.jpg" style="width: 168mm" alt="Sandbox del Modo 2 durante una ejecución">
+      <figcaption>Sandbox durante la sesión «Marcar ceros», después de 5 pasos.</figcaption>
+    </figure>
+    <ol class="leyenda-num">
+      <li><strong>Diagrama que construyes:</strong> empieza solo con los estados; cada decisión nueva agrega una flecha con su etiqueta <span class="mono">a/b,M</span>.</li>
+      <li><strong>Estado de la máquina</strong> y las pestañas <span class="ui">Registro</span>, <span class="ui">Transiciones δ</span> y <span class="ui">Grabadas</span>.</li>
+      <li><strong>Cinta actual</strong> con el cabezal, el botón <span class="ui">Grabar cinta</span> y el <strong>segmento modificado</strong>.</li>
+      <li><strong>Panel de decisión</strong> para el paso actual, con deshacer y reiniciar.</li>
+      <li><strong>Configuración para el Modo 1</strong>, que se actualiza con cada paso.</li>
+    </ol>
+  </div>
+  <div class="pie-pag"><span>Universidad Mariano Gálvez · Proyecto final 2026</span></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="pagina">
+  <div class="encabezado-pag"><span>Simulador de Máquina de Turing</span><span>Modo 2 · Ejecución manual</span></div>
+  <div class="cuerpo">
+    <h3 data-toc="2" style="margin-top: 0"><span class="num">5.3</span>Hacer un paso: cambiar el símbolo, elegir el estado y mover</h3>
+    <p>En cada paso el cabezal <strong>lee</strong> la celda donde está y el panel de decisión despliega las opciones para esa celda (punto 3 de la guía). Un paso se hace en tres partes:</p>
+    <figure>
+      <img src="img/08d-sandbox-decision.jpg" style="width: 170mm" alt="Panel de decisión del sandbox">
+      <figcaption>Panel de decisión: el cabezal lee 1 en la celda 6 estando en q₁.</figcaption>
+    </figure>
+    <ol>
+      <li><strong>¿Cambiar el símbolo?</strong> (punto 4 de la guía). <span class="ui">Sin cambios</span> deja el símbolo leído; las demás fichas son <strong>todas las opciones del alfabeto</strong> (Σ, auxiliares y <span class="mono">^</span>). Si no se toca nada, se continúa sin cambios.</li>
+      <li><strong>Estado siguiente.</strong> Se elige a qué estado de Q pasa la máquina. <span class="ui">+ nuevo</span> agrega un estado más a Q si hace falta.</li>
+      <li><strong>Mover y aplicar.</strong> El botón aplica el paso:
+        <ul style="margin-top: 1mm">
+          <li><strong>D</strong> = movimiento a la derecha,</li>
+          <li><strong>I</strong> = movimiento a la izquierda,</li>
+          <li><strong>S</strong> = no se mueve (estado de paro): la ejecución termina.</li>
+        </ul>
+      </li>
+    </ol>
+    <p>Al pasar el ratón sobre un movimiento se ve qué se aplicará, por ejemplo <span class="mono">Se aplicará: δ(q1, 1) = (q1, 1, D) · misma regla del paso 4</span>. Cuando el par (estado, símbolo) ya tiene una regla, sus opciones aparecen elegidas de antemano. Si se toma una decisión distinta para un par ya usado, el simulador avisa que <em>la máquina dejó de ser determinista</em> y sugiere deshacer el paso. Tampoco deja salir al cabezal de las celdas 0 a 49.</p>
+
+    <h3 data-toc="2"><span class="num">5.4</span>Cinta actual y segmento modificado</h3>
+    <p>La cinta se redibuja con cada paso (punto 5 de la guía). Las celdas cuyo símbolo cambió llevan un <strong>punto amarillo</strong> y un corchete debajo marca el tramo modificado. En <strong>Segmento modificado</strong> se ven esas celdas <em>Antes</em> (como estaban al empezar) y <em>Ahora</em>, con el rango y el número de cambios.</p>
+    <figure>
+      <img src="img/08c-sandbox-cinta-segmento.jpg" style="width: 170mm" alt="Cinta y segmento modificado">
+      <figcaption>Las celdas 2 y 5 cambiaron de 0 a X: el segmento modificado abarca las celdas 2 a 5.</figcaption>
+    </figure>
+  </div>
+  <div class="pie-pag"><span>Universidad Mariano Gálvez · Proyecto final 2026</span></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="pagina">
+  <div class="encabezado-pag"><span>Simulador de Máquina de Turing</span><span>Modo 2 · Ejecución manual</span></div>
+  <div class="cuerpo">
+    <h3 data-toc="2" style="margin-top: 0"><span class="num">5.5</span>Deshacer, reiniciar y atajos de teclado</h3>
+    <p><span class="ui">Deshacer</span> quita el último paso (se puede repetir hasta el inicio) y <span class="ui">Reiniciar</span> borra todos los pasos y regresa a la cinta inicial, previa confirmación. Debajo de las opciones, un texto explica en palabras el último paso.</p>
+    <table class="tabla-compacta">
+      <thead><tr><th style="width: 30%">Tecla</th><th>Acción en el sandbox</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>→</kbd></td><td>D: aplicar el paso moviendo a la derecha.</td></tr>
+        <tr><td><kbd>←</kbd></td><td>I: aplicar el paso moviendo a la izquierda.</td></tr>
+        <tr><td><kbd>↓</kbd></td><td>S: aplicar el paso sin mover (estado de paro).</td></tr>
+        <tr><td>Un símbolo de Γ</td><td>Elegirlo como símbolo a escribir (por ejemplo, teclear <kbd>X</kbd>).</td></tr>
+        <tr><td><kbd>Esc</kbd></td><td>Volver a «Sin cambios».</td></tr>
+        <tr><td><kbd>Ctrl</kbd> + <kbd>Z</kbd> o <kbd>Retroceso</kbd></td><td>Deshacer el último paso.</td></tr>
+        <tr><td><kbd>R</kbd></td><td>Reiniciar la ejecución.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 data-toc="2"><span class="num">5.6</span>Registro, transiciones y cintas grabadas</h3>
+    <p>El panel derecho tiene tres pestañas:</p>
+    <ul>
+      <li><strong>Registro</strong> (punto 7 de la guía): cada movimiento y cambio en la cinta, con la transición usada, la celda, si el símbolo cambió y la terna (estado, contenido, posición) resultante.</li>
+      <li><strong>Transiciones δ:</strong> la función que se ha formado con las decisiones, y cuántas veces se usó cada regla.</li>
+      <li><strong>Grabadas</strong> (punto 6 de la guía): <span class="ui">Grabar cinta</span> guarda el contenido actual de la cinta con el nombre de la sesión, el paso y el estado. Cada cinta grabada se puede <span class="ui">Descargar</span> (.json), <span class="ui">Usar como cinta inicial</span> (la ejecución empieza de nuevo con esa cinta) o <span class="ui">Eliminar</span>. Se conservan en el navegador aunque se cierre la página (hasta 30).</li>
+    </ul>
+    <div class="fila-figuras">
+      <figure>
+        <img src="img/09a-sandbox-registro.jpg" alt="Pestaña Registro">
+        <figcaption>Registro de los últimos pasos.</figcaption>
+      </figure>
+      <figure>
+        <img src="img/09b-sandbox-delta.jpg" alt="Pestaña Transiciones δ">
+        <figcaption>δ construida y usos de cada regla.</figcaption>
+      </figure>
+      <figure>
+        <img src="img/09c-sandbox-grabadas.jpg" alt="Pestaña Grabadas">
+        <figcaption>Cinta grabada en el paso 7.</figcaption>
+      </figure>
+    </div>
+  </div>
+  <div class="pie-pag"><span>Universidad Mariano Gálvez · Proyecto final 2026</span></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="pagina">
+  <div class="encabezado-pag"><span>Simulador de Máquina de Turing</span><span>Modo 2 · Ejecución manual</span></div>
+  <div class="cuerpo">
+    <h3 data-toc="2" style="margin-top: 0"><span class="num">5.7</span>Fin de la ejecución</h3>
+    <p>La ejecución manual termina de dos formas: al <strong>llegar al estado final</strong> elegido en la preparación (aviso <em>«¡Llegaste al estado final q₃!»</em> y resultado <em>Estado final alcanzado</em>) o al elegir <strong>S</strong>, que deja la máquina en <strong>estado de paro</strong> (<em>Detenida con S</em>). Después ya no se pueden aplicar pasos, pero sí deshacer, grabar la cinta o exportar.</p>
+    <figure>
+      <img src="img/09-sandbox-final.jpg" style="width: 116mm" alt="Sandbox al llegar al estado final">
+      <figcaption>La sesión «Marcar ceros» llegó a q₃ en 8 pasos: los ceros de la cinta quedaron marcados con X.</figcaption>
+    </figure>
+
+    <h3 data-toc="2"><span class="num">5.8</span>Usar la sesión en el Modo 1</h3>
+    <p>Cada paso del registro se convierte en una transición δ. El panel <strong>Configuración para el Modo 1</strong> muestra la máquina resultante y una <strong>comprobación</strong>: el simulador ejecuta esa máquina con las reglas del Modo 1 y la compara paso a paso con la sesión (en verde si la reproduce completa; en amarillo, explicando la diferencia, si no). La palabra de entrada es el contenido de la cinta inicial desde la celda 1 hasta el último símbolo no blanco.</p>
+    <ul>
+      <li><span class="ui">Ejecutar en Modo 1</span> abre directamente la simulación automática con esa máquina (figura 26).</li>
+      <li><span class="ui">Descargar .json</span> la guarda como archivo para abrirla después con «Cargar configuración».</li>
+      <li><span class="ui">Registro .txt</span> descarga todo el registro de movimientos y cambios (5.9).</li>
+    </ul>
+    <figure>
+      <img src="img/09d-sandbox-exportar-final.jpg" style="width: 170mm" alt="Configuración para el Modo 1">
+      <figcaption>Configuración exportable y comprobación: «El Modo 1 reproduce tus 8 pasos y termina en q3: palabra aceptada».</figcaption>
+    </figure>
+  </div>
+  <div class="pie-pag"><span>Universidad Mariano Gálvez · Proyecto final 2026</span></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="pagina">
+  <div class="encabezado-pag"><span>Simulador de Máquina de Turing</span><span>Modo 2 · Ejecución manual</span></div>
+  <div class="cuerpo">
+    <figure style="margin-top: 0">
+      <img src="img/10-modo1-desde-modo2.jpg" style="width: 150mm" alt="La sesión manual ejecutada en el Modo 1">
+      <figcaption>La sesión manual abierta con «Ejecutar en Modo 1»: el Modo 1 la reproduce sola y acepta la palabra. D e I aparecen como R y L, y ^ como B.</figcaption>
+    </figure>
+
+    <h3 data-toc="2"><span class="num">5.9</span>Archivo de registro <span class="tal-cual">(.txt)</span></h3>
+    <p>El archivo que descarga <span class="ui">Registro .txt</span> contiene los datos de la sesión, la tabla de movimientos con la terna de cada paso, el resultado, el segmento modificado y las transiciones registradas. Este es el de la sesión de ejemplo (recortado):</p>
+<pre>Sesión:  Marcar ceros
+Σ = {0, 1}      Γ = {0, 1, X, ^}   (^ = blanco □)
+Q = {q0, q1, q2, q3}   Estado inicial: q0   Estado final: q3
+
+<span class="k">REGISTRO DE MOVIMIENTOS Y CAMBIOS</span>
+Paso  Estado  Celda  Lee  Escribe  Mov  Nuevo   Terna (estado, contenido, posición)
+0     —       —      —    —        —    q0      (q0, 10^101^^1, 1)
+1     q0      1      1    1        D    q0      (q0, 10^101^^1, 2)
+2     q0      2      0    X *      D    q0      (q0, 1X^101^^1, 3)
+3     q0      3      ^    ^        D    q1      (q1, 1X^101^^1, 4)
+<span class="c">  …</span>
+8     q2      8      ^    ^        D    q3      (q3, 1X^1X1^^1, 9)
+<span class="c">(* = la celda cambió de símbolo)</span>
+
+Resultado: Llegó al estado final q3 en 8 pasos.
+<span class="k">SEGMENTO MODIFICADO</span> (celdas 2 a 5, 2 cambios)
+  antes: 0 ^ 1 0
+  ahora: X ^ 1 X
+
+<span class="k">TRANSICIONES REGISTRADAS (δ)</span>
+δ(q0, 1) = (q0, 1, D)   pasos: 1
+δ(q0, 0) = (q0, X, D)   pasos: 2
+δ(q1, 1) = (q1, 1, D)   pasos: 4, 6
+<span class="c">  …</span>
+En el Modo 1: D se escribe R, I se escribe L y el blanco ^ se escribe B.</pre>
+  </div>
+  <div class="pie-pag"><span>Universidad Mariano Gálvez · Proyecto final 2026</span></div>
+</section>
+
+<!-- =====================================================================
+     6. DESCRIPCIÓN TÉCNICA
+     ===================================================================== -->
+<section class="pagina">
+  <div class="encabezado-pag"><span>Simulador de Máquina de Turing</span><span>Descripción de lo realizado</span></div>
+  <div class="cuerpo">
+    <h2 data-toc="1"><span class="num">06</span>Descripción de lo realizado</h2>
+
+    <h3 data-toc="2"><span class="num">6.1</span>Tecnologías</h3>
+    <ul>
+      <li><strong>HTML5, CSS3 y JavaScript</strong> puro, sin frameworks ni librerías externas. Toda la lógica de la máquina (validación, ejecución, registro y exportación) está escrita para el proyecto.</li>
+      <li><strong>SVG</strong> para los diagramas de estados, que se calculan y dibujan a partir de δ, y para la decoración.</li>
+      <li><strong>PowerShell</strong> (<span class="mono">System.Net.HttpListener</span>) para el servidor local que abre INICIAR.bat; no requiere instalar Node, Python ni otro servidor.</li>
+      <li>Fuentes <em>Libre Baskerville</em> y <em>JetBrains Mono</em> (Google Fonts) e íconos de <em>Lucide</em> (licencia ISC), copiados como SVG dentro de cada página.</li>
+    </ul>
+
+    <h3 data-toc="2"><span class="num">6.2</span>Estructura de carpetas</h3>
+<pre class="arbol">PROYECTO AUTÓMATAS/
+├── <span class="k">INICIAR.bat</span>                  <span class="c">Abre el servidor local y el navegador (puerto 5577)</span>
+├── LEEME.txt                    <span class="c">Instrucciones rápidas</span>
+├── index.html                   <span class="c">Menú principal (con styles.css y script.js)</span>
+├── formulario/
+│   ├── configuracion.*          <span class="c">Nueva configuración del Modo 1 (formulario)</span>
+│   └── <span class="k">maquina.js</span>               <span class="c">Objeto MT: validación, formato .json, guardado</span>
+├── modo1/
+│   ├── automatico.*             <span class="c">Inicio del Modo 1: Opción 1 y Opción 2</span>
+│   └── Simulacion/simulacion.*  <span class="c">Simulación gráfica (automática y paso a paso)</span>
+├── modo2/
+│   ├── manual.*                 <span class="c">Preparación: alfabeto, estados, cinta inicial</span>
+│   ├── <span class="k">sesion.js</span>                <span class="c">Objeto MANUAL: sesión, registro, exportación</span>
+│   └── Sandbox/sandbox.*        <span class="c">Ejecución manual paso a paso</span>
+├── ejemplos/ejemplo-0n1n.json   <span class="c">Máquina de ejemplo para «Cargar configuración»</span>
+├── herramientas/servidor.ps1    <span class="c">Servidor local en PowerShell</span>
+├── .vscode/settings.json        <span class="c">Puerto 5510 para Live Server</span>
+└── docs/                        <span class="c">Este manual (PDF) y su fuente</span></pre>
+    <p>Cada pantalla tiene su propio <span class="mono">.html</span>, <span class="mono">.css</span> y <span class="mono">.js</span>. La lógica común está en dos módulos que comparten las pantallas:</p>
+    <ul>
+      <li><span class="mono">formulario/maquina.js</span> (<strong>MT</strong>): define la máquina M = (Q, Σ, Γ, δ, q₀, B, F) y sus constantes (50 celdas, blanco B, palabra desde la celda 1). Hace la <strong>misma validación</strong> para el formulario, para los archivos cargados y para lo exportado desde el Modo 2; convierte la máquina a <span class="mono">.json</span>, la descarga y la guarda en la pestaña para la simulación.</li>
+      <li><span class="mono">modo2/sesion.js</span> (<strong>MANUAL</strong>): guarda la sesión del Modo 2, repite sus pasos para reconstruir cada configuración, detecta decisiones no deterministas, arma la configuración para el Modo 1, la comprueba, genera el registro <span class="mono">.txt</span> y administra las cintas grabadas.</li>
+    </ul>
+  </div>
+  <div class="pie-pag"><span>Universidad Mariano Gálvez · Proyecto final 2026</span></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="pagina">
+  <div class="encabezado-pag"><span>Simulador de Máquina de Turing</span><span>Descripción de lo realizado</span></div>
+  <div class="cuerpo">
+    <h3 data-toc="2" style="margin-top: 0"><span class="num">6.3</span>Formato del archivo de configuración <span class="tal-cual">(.json)</span></h3>
+    <p>Una configuración se guarda como texto JSON. El mismo formato sirve para el formulario, para «Cargar configuración» y para lo que exporta el Modo 2. Este es el ejemplo incluido, <span class="mono">ejemplos/ejemplo-0n1n.json</span> (recortado):</p>
+<pre>{
+  "nombre": "Lenguaje 0ⁿ1ⁿ",
+  "estados": ["q0", "q1", "q2", "q3", "q4"],        <span class="c">// Q</span>
+  "alfabetoEntrada": ["0", "1"],                    <span class="c">// Σ</span>
+  "alfabetoCinta": ["0", "1", "X", "Y", "B"],       <span class="c">// Γ</span>
+  "estadoInicial": "q0",                            <span class="c">// q₀</span>
+  "blanco": "B",                                    <span class="c">// B</span>
+  "estadosFinales": ["q4"],                         <span class="c">// F</span>
+  "transiciones": [                                 <span class="c">// δ(estado, lee) = (nuevoEstado, escribe, mueve)</span>
+    { "estado": "q0", "lee": "0", "nuevoEstado": "q1", "escribe": "X", "mueve": "R" },
+    { "estado": "q1", "lee": "1", "nuevoEstado": "q2", "escribe": "Y", "mueve": "L" },
+    <span class="c">…</span>
+    { "estado": "q3", "lee": "B", "nuevoEstado": "q4", "escribe": "B", "mueve": "R" }
+  ],
+  "palabra": "0011"                                 <span class="c">// w</span>
+}</pre>
+
+    <h3 data-toc="2"><span class="num">6.4</span>Decisiones de diseño</h3>
+    <table class="tabla-compacta">
+      <thead><tr><th style="width: 29%">Decisión</th><th>Motivo</th></tr></thead>
+      <tbody>
+        <tr><td>Blanco ^ (Modo 2) → B (Modo 1)</td><td>La guía usa <span class="mono">^</span> como blanco en el Modo 2 y <span class="mono">B</span> en la definición formal del Modo 1. Al exportar, cada <span class="mono">^</span> se escribe <span class="mono">B</span>. En el Modo 1 el blanco es fijo para que todas las configuraciones sean compatibles.</td></tr>
+        <tr><td>Movimientos D / I → R / L</td><td>El Modo 2 usa D, I y S como pide la guía; el Modo 1 usa la notación formal D ∈ {R, L, S}. Al exportar, D se escribe R e I se escribe L (S queda igual). Al cargar un archivo también se aceptan D e I.</td></tr>
+        <tr><td>Cinta de 50 celdas (0 a 49)</td><td>La guía pide simular la cinta con 50 celdas. La palabra empieza en la celda 1 para que la celda 0 quede en blanco a la izquierda, por eso caben 49 símbolos. Si una transición saca al cabezal de la cinta, la ejecución termina con «Fuera de la cinta».</td></tr>
+        <tr><td>Máquina determinista</td><td>Cada par (estado, símbolo) tiene a lo sumo una transición. El formulario no deja guardar pares repetidos y el sandbox avisa si una decisión contradice otra anterior; la exportación se bloquea hasta deshacer el conflicto.</td></tr>
+        <tr><td>Aceptar al entrar a un estado final</td><td>La máquina se detiene y acepta en cuanto entra a un estado de F; se detiene y rechaza si no hay transición para el par actual.</td></tr>
+        <tr><td>Límite de 2000 pasos</td><td>Evita que una máquina que nunca se detiene congele la página («Sin detenerse»).</td></tr>
+        <tr><td>Sesión manual = lista de decisiones</td><td>El Modo 2 guarda solo lo que el usuario decidió en cada paso; el estado, la celda y la cinta se recalculan repitiendo los pasos. Así deshacer es exacto y el registro, la función δ y la exportación siempre coinciden.</td></tr>
+        <tr><td>Comprobación con el Modo 1</td><td>Antes de exportar se ejecuta la máquina con las reglas del Modo 1 para confirmar que reproduce la sesión manual.</td></tr>
+        <tr><td>Datos en el navegador</td><td>La máquina actual pasa entre pantallas con <span class="mono">sessionStorage</span> (dura lo que la pestaña); las cintas grabadas usan <span class="mono">localStorage</span> (quedan entre visitas). Lo permanente se descarga como archivo <span class="mono">.json</span> o <span class="mono">.txt</span>.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="pie-pag"><span>Universidad Mariano Gálvez · Proyecto final 2026</span></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="pagina">
+  <div class="encabezado-pag"><span>Simulador de Máquina de Turing</span><span>Descripción de lo realizado</span></div>
+  <div class="cuerpo">
+    <h3 data-toc="2" style="margin-top: 0"><span class="num">6.5</span>Cómo se realizó el proyecto</h3>
+    <ol>
+      <li><strong>Análisis de la guía.</strong> Se separaron los requisitos de cada modo, con base en la definición formal M = (Q, Σ, Γ, δ, q₀, B, F) y δ(q<sub>i</sub>, X) = (q<sub>j</sub>, Y, D).</li>
+      <li><strong>Diseño de la interfaz.</strong> Una estética común para todas las pantallas (azul marino, tipografía con serifas, cintas y diagramas) y la navegación menú → modo → configuración → ejecución.</li>
+      <li><strong>Modelo y validación.</strong> El módulo <span class="mono">maquina.js</span>, con las reglas de una configuración válida y el formato <span class="mono">.json</span>, compartido por el formulario, la carga de archivos y la exportación.</li>
+      <li><strong>Modo 1.</strong> Formulario con vistas de lista y tabla, guardado y carga de archivos, y la simulación: cinta, cabezal, diagrama calculado desde δ, historial de la terna, velocidad, pausa y paso a paso.</li>
+      <li><strong>Modo 2.</strong> Preparación con llenado al azar y sandbox: decisión en tres partes, segmento modificado, cintas grabadas, registro, deshacer, aviso de no determinismo, exportación y comprobación.</li>
+      <li><strong>Ejecución local.</strong> Como Oracle ocupaba el puerto 5500 de Live Server, se agregó el servidor en PowerShell que abre INICIAR.bat.</li>
+      <li><strong>Pruebas.</strong> Ambos modos se probaron con el ejemplo 0ⁿ1ⁿ (0011 se acepta en 13 pasos) y con sesiones manuales exportadas, como la de este manual (8 pasos, reproducidos completos por el Modo 1).</li>
+    </ol>
+
+    <h3 data-toc="2"><span class="num">6.6</span>Cumplimiento de la guía</h3>
+    <table class="tabla-compacta">
+      <thead><tr><th style="width: 50%">Requisito de la guía</th><th>Dónde se cumple</th></tr></thead>
+      <tbody>
+        <tr><td>Elegir configuración nueva o guardada</td><td>Inicio del Modo 1, Opción 1 (4.1)</td></tr>
+        <tr><td>Buscar una configuración guardada</td><td>«Cargar configuración» (4.3)</td></tr>
+        <tr><td>Dejar guardada una configuración nueva</td><td>«Guardar configuración» descarga el .json (4.2)</td></tr>
+        <tr><td>Configuración: Q, Σ, Γ, B, q₀, F, δ y palabra</td><td>Formulario de cinco secciones (4.2)</td></tr>
+        <tr><td>No ejecutar sin configuración previa</td><td>«Ejecutar» bloqueada con aviso (4.1)</td></tr>
+        <tr><td>Cinta de 50 celdas y cabezal resaltado</td><td>Panel de cinta de la simulación (4.4)</td></tr>
+        <tr><td>Pausar, reanudar y ajustar milisegundos</td><td>Ejecutar / Pausar / Reanudar; 100 a 3000 ms (4.5)</td></tr>
+        <tr><td>Historial de la terna en tiempo real</td><td>Pestaña «Historial» (4.4)</td></tr>
+        <tr><td>Modo 2 · 1. Alfabeto y cinta al azar con ^</td><td>Preparación, secciones 01 y 03 (5.1)</td></tr>
+        <tr><td>Modo 2 · 2. Estado final o estado de paro</td><td>Estado final (meta) y movimiento S (5.1, 5.7)</td></tr>
+        <tr><td>Modo 2 · 3. Movimientos D, I y S</td><td>Panel de decisión, parte 3 (5.3)</td></tr>
+        <tr><td>Modo 2 · 4. Cambiar símbolo o sin cambios</td><td>Panel de decisión, parte 1 (5.3)</td></tr>
+        <tr><td>Modo 2 · 5. Cinta y segmento modificado</td><td>Marcas en la cinta y tabla Antes / Ahora (5.4)</td></tr>
+        <tr><td>Modo 2 · 6. Grabar la cinta</td><td>«Grabar cinta» y pestaña «Grabadas» (5.6)</td></tr>
+        <tr><td>Modo 2 · 7. Registro usable en el Modo 1</td><td>Registro, «Ejecutar en Modo 1» y .json (5.6, 5.8)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="pie-pag"><span>Universidad Mariano Gálvez · Proyecto final 2026</span></div>
+</section>
+
+<!-- =====================================================================
+     7. ENTREGA
+     ===================================================================== -->
+<section class="pagina">
+  <div class="encabezado-pag"><span>Simulador de Máquina de Turing</span><span>Entrega</span></div>
+  <div class="cuerpo">
+    <h2 data-toc="1"><span class="num">07</span>Código fuente y entrega</h2>
+    <p>El código fuente completo del simulador se guarda en el drive compartido del grupo:</p>
+    <div class="drive" style="margin: 4mm 0 5mm">
+      <span class="etiqueta-drive">ENLACE DEL DRIVE:</span>
+      <span class="rellenar" data-campo="drive"></span>
+    </div>
+
+    <h3 data-toc="2"><span class="num">7.1</span>Contenido del drive</h3>
+    <ul>
+      <li>La carpeta completa <span class="mono">PROYECTO AUTÓMATAS</span> (también en .zip), con la estructura de la sección 6.2.</li>
+      <li>Este manual en PDF: <span class="mono">docs/Manual-Simulador-MT.pdf</span>.</li>
+      <li>El ejemplo <span class="mono">ejemplos/ejemplo-0n1n.json</span> para probar «Cargar configuración».</li>
+    </ul>
+
+    <h3 data-toc="2"><span class="num">7.2</span>Cómo abrirlo desde el drive</h3>
+    <ol>
+      <li>Descarga la carpeta (o el .zip) del drive y, si está comprimida, extráela.</li>
+      <li>Haz doble clic en <strong>INICIAR.bat</strong> y deja abierta la ventana negra (sección 2).</li>
+      <li>En el menú, elige <span class="ui">Ejecución automática</span> → <span class="ui">Cargar configuración</span> y abre <span class="mono" style="white-space: nowrap">ejemplos/ejemplo-0n1n.json</span> para ver una máquina funcionando.</li>
+    </ol>
+
+    <h3 data-toc="2"><span class="num">7.3</span>Integrantes del grupo</h3>
+    <table class="grupo-final">
+      <thead><tr><th style="width: 12mm">No.</th><th>Nombre completo</th><th style="width: 45mm">Carné</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><span class="rellenar" data-campo="nombre1"></span></td><td><span class="rellenar" style="min-width: 34mm" data-campo="carne1"></span></td></tr>
+        <tr><td>2</td><td><span class="rellenar" data-campo="nombre2"></span></td><td><span class="rellenar" style="min-width: 34mm" data-campo="carne2"></span></td></tr>
+        <tr><td>3</td><td><span class="rellenar" data-campo="nombre3"></span></td><td><span class="rellenar" style="min-width: 34mm" data-campo="carne3"></span></td></tr>
+        <tr><td>4</td><td><span class="rellenar" data-campo="nombre4"></span></td><td><span class="rellenar" style="min-width: 34mm" data-campo="carne4"></span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="nota" style="margin-top: 5mm">
+      <p><span class="etiqueta">Fechas</span>Entrega en plataforma: domingo 8 de noviembre de 2026. Presentación: martes 10 o jueves 12 de noviembre de 2026.</p>
+    </div>
+
+    <h3 data-toc="2"><span class="num">7.4</span>Problemas frecuentes</h3>
+    <table class="tabla-compacta">
+      <thead><tr><th style="width: 36%">Problema</th><th>Solución</th></tr></thead>
+      <tbody>
+        <tr><td>La página no carga</td><td>Ábrelo con INICIAR.bat y deja la ventana negra abierta. Con Live Server usa el puerto 5510, no el 5500 (sección 2.3).</td></tr>
+        <tr><td>«Ejecutar» está bloqueada</td><td>Primero crea una configuración nueva o carga un archivo .json (4.1).</td></tr>
+        <tr><td>Error al cargar un .json</td><td>El aviso indica qué dato está mal. El archivo debe tener el formato de la sección 6.3.</td></tr>
+        <tr><td>No aparece el archivo descargado</td><td>Revisa la carpeta Descargas y que el navegador permita descargas desde localhost.</td></tr>
+        <tr><td>Se perdió la máquina al cerrar la pestaña</td><td>La máquina en uso dura lo que la pestaña; ábrela otra vez con «Cargar configuración» desde su .json.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="pie-pag"><span>Universidad Mariano Gálvez · Proyecto final 2026</span></div>
+</section>
+
+<script>
+  // Datos del grupo: si se llenan aquí, aparecen en la portada y en la sección 7.
+  const DATOS = {
+    nombre1: 'Astrid Chiguichón', carne1: '5090-24-6899',
+    nombre2: 'Karla Téllez', carne2: '5090-24-4646',
+    nombre3: 'Daniela Paredes', carne3: '5090-24-5490',
+    nombre4: 'José Zumeta', carne4: '5090-24-10024',
+    catedratico: '', seccion: '',
+    drive: '',
+  };
+  document.querySelectorAll('[data-campo]').forEach((el) => {
+    const valor = DATOS[el.dataset.campo];
+    if (valor) el.textContent = valor;
+  });
+
+  // Índice con el número de página de cada título
+  const paginas = [...document.querySelectorAll('.pagina')];
+  const indice = document.getElementById('indice');
+  document.querySelectorAll('[data-toc]').forEach((h) => {
+    const pag = paginas.indexOf(h.closest('.pagina')) + 1;
+    const nivel = h.dataset.toc;
+    const num = h.querySelector('.num');
+    const texto = [...h.childNodes].filter((n) => n !== num).map((n) => n.textContent).join('').trim();
+    const li = document.createElement('li');
+    li.className = 'n' + nivel;
+    li.innerHTML = `<span class="n">${num ? num.textContent : ''}</span><span>${texto}</span><span class="puntos"></span><span class="pag">${pag}</span>`;
+    indice.appendChild(li);
+  });
+
+  // Revisión: páginas cuyo contenido no cabe
+  window.revisarPaginas = () => paginas
+    .map((p, i) => {
+      const c = p.querySelector('.cuerpo');
+      return c && c.scrollHeight > c.clientHeight + 1 ? `pág. ${i + 1}: sobran ${Math.round((c.scrollHeight - c.clientHeight) / 3.78)} mm` : null;
+    })
+    .filter(Boolean);
+</script>
+</body>
+</html>

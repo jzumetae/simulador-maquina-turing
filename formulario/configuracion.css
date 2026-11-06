@@ -1,0 +1,1322 @@
+/* =========================================================
+   Simulador · Máquina de Turing — pantalla "Nueva configuración"
+   Se carga DESPUÉS de styles.css: usa sus colores, fuentes,
+   decoración, encabezado, tarjetas, cinta, pie y aviso.
+   ========================================================= */
+
+:root {
+  --error: #E8828F;
+  --error-texto: #F5B3BC;
+  --ok: #9FE3C3;
+  --entrada-borde: rgba(217, 246, 255, 0.32);
+  --entrada-fondo: rgba(255, 255, 255, 0.06);
+}
+
+/* ---------- Página larga ---------- */
+
+/* El formulario es largo: aquí la letra solo depende del ancho de la
+   ventana (en el menú también depende del alto, porque todo cabe en
+   una pantalla). */
+html {
+  font-size: clamp(14px, 1.0417vw, 17px);
+}
+
+/* La decoración se queda en las esquinas de la página y se desplaza
+   con ella, para que no quede debajo del formulario. */
+.pagina-config {
+  position: relative;
+}
+
+.pagina-config .decoracion {
+  position: absolute;
+}
+
+.pantalla-config {
+  padding: 3.4rem 1rem 9rem;
+}
+
+h3 {
+  margin: 0;
+}
+
+/* ---------- Encabezado ---------- */
+.pantalla-config .encabezado__sup {
+  font-size: 1.5rem;
+  letter-spacing: 0.32em;
+}
+
+.pantalla-config .encabezado__sup span:not(.linea) {
+  margin-right: -0.32em;
+}
+
+.pantalla-config .titulo {
+  font-size: 4.2rem;
+}
+
+.lema--formal {
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  letter-spacing: 0.14em;
+  text-transform: none;
+  margin-right: -0.14em;
+}
+
+.lema--formal sub {
+  font-size: 0.7em;
+}
+
+.pantalla-config .separador {
+  margin-top: 2.6rem;
+}
+
+.pantalla-config .separador::before,
+.pantalla-config .separador::after {
+  width: 7.5rem;
+}
+
+/* ---------- Formulario ---------- */
+.formulario {
+  width: 57.8rem;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  margin-top: 2.3rem;
+}
+
+/* Tarjeta de cada sección */
+.seccion {
+  padding: 1.8rem 2.4rem 2.1rem;
+  background: linear-gradient(100deg, var(--card-def-1) 0%, var(--card-def-2) 62%, var(--card-def-3) 100%);
+  animation: aparecer 0.7s ease both;
+  transition: box-shadow 0.3s ease;
+}
+
+.seccion::before {
+  background: linear-gradient(160deg, rgba(120, 170, 210, 0.05), rgba(120, 170, 210, 0.13));
+  clip-path: polygon(88% 0, 100% 0, 100% 100%, 80% 100%);
+}
+
+.seccion:nth-child(2) { animation-delay: 0.06s; }
+.seccion:nth-child(3) { animation-delay: 0.12s; }
+.seccion:nth-child(4) { animation-delay: 0.18s; }
+.seccion:nth-child(5) { animation-delay: 0.24s; }
+.seccion:nth-child(6) { animation-delay: 0.3s; }
+
+.seccion--guardar {
+  background: linear-gradient(100deg, var(--card-man-1) 0%, var(--card-man-2) 58%, var(--card-man-3) 100%);
+}
+
+.seccion--guardar::before {
+  background: linear-gradient(160deg, rgba(140, 190, 225, 0.12), rgba(140, 190, 225, 0.22));
+}
+
+/* Sección con datos por corregir: franja roja a la izquierda */
+.seccion.con-error {
+  box-shadow: var(--sombra), inset 0.3rem 0 0 var(--error);
+}
+
+/* Cabecera de la sección */
+.seccion__cabeza {
+  display: grid;
+  grid-template-columns: 3.4rem 1fr auto;
+  column-gap: 1.5rem;
+  align-items: center;
+}
+
+.seccion__num {
+  width: 3.4rem;
+  height: 3.4rem;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  color: var(--card-titulo);
+  box-shadow: 0 0 0.8rem rgba(176, 217, 242, 0.2), inset 0 0 0.6rem rgba(176, 217, 242, 0.1);
+}
+
+.seccion__num svg {
+  width: 1.6rem;
+  height: 1.6rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.seccion__titulo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.9rem;
+  font-size: 1.3rem;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--card-titulo);
+}
+
+.seccion__ayuda {
+  margin-top: 0.4rem;
+  max-width: 40rem;
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: rgba(230, 246, 254, 0.78);
+}
+
+/* q0 y w no se pasan a mayúsculas (Q es otra cosa) */
+.tal-cual {
+  text-transform: none;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.15em;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+.seccion__ayuda sub,
+.campo__etiqueta sub,
+.seccion__simbolo sub {
+  font-size: 0.7em;
+}
+
+.seccion__simbolo {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 2.4rem;
+  line-height: 1;
+  color: var(--acento);
+  white-space: nowrap;
+  opacity: 0.9;
+}
+
+.seccion__divisor {
+  display: block;
+  height: 1px;
+  margin: 1.35rem 0 1.5rem;
+  background: var(--card-divisor);
+}
+
+/* Marca junto al título: "2 por corregir" o "listo" */
+.seccion__marca {
+  display: none;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-family: var(--font-serif);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: none;
+}
+
+.seccion.con-error .seccion__marca,
+.seccion.completa .seccion__marca {
+  display: inline-block;
+}
+
+.seccion.con-error .seccion__marca {
+  background: rgba(232, 130, 143, 0.18);
+  border: 1px solid rgba(232, 130, 143, 0.6);
+  color: var(--error-texto);
+}
+
+.seccion.completa .seccion__marca {
+  background: rgba(159, 227, 195, 0.12);
+  border: 1px solid rgba(159, 227, 195, 0.5);
+  color: var(--ok);
+}
+
+/* ---------- Campos ---------- */
+.rejilla {
+  display: grid;
+  gap: 1.4rem 1.8rem;
+}
+
+.rejilla--alfabetos {
+  grid-template-columns: 1fr 11rem;
+}
+
+.rejilla--mitades {
+  grid-template-columns: 1fr 1fr;
+}
+
+.rejilla--palabra {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  align-items: start;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.campo--ancho {
+  grid-column: 1 / -1;
+}
+
+.campo--nombre {
+  max-width: 28rem;
+  margin-top: 1.4rem;
+}
+
+.campo__etiqueta {
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(214, 237, 250, 0.82);
+}
+
+.entrada {
+  width: 100%;
+  min-width: 0;
+  padding: 0.7rem 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  color: var(--card-texto);
+  background: var(--entrada-fondo);
+  border: 1px solid var(--entrada-borde);
+  border-radius: 0.45rem;
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.entrada::placeholder {
+  color: rgba(214, 237, 250, 0.36);
+}
+
+.entrada:hover {
+  border-color: rgba(217, 246, 255, 0.55);
+}
+
+.entrada:focus {
+  outline: none;
+  border-color: var(--acento);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 3px rgba(176, 217, 242, 0.18);
+}
+
+.entrada.invalida {
+  border-color: var(--error);
+  box-shadow: 0 0 0 3px rgba(232, 130, 143, 0.14);
+}
+
+.entrada--corta {
+  text-align: center;
+}
+
+/* Listas desplegables */
+select.entrada {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 1.9rem;
+  cursor: pointer;
+  text-overflow: ellipsis;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23B0D9F2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.55rem center;
+  background-size: 1rem;
+}
+
+select.entrada.vacia {
+  color: rgba(214, 237, 250, 0.42);
+}
+
+select.entrada option {
+  background: #0C2A45;
+  color: var(--card-texto);
+}
+
+select.entrada option.fuera {
+  color: var(--error-texto);
+}
+
+/* Vista previa del conjunto: Q = {q0, q1} */
+.campo__vista {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: rgba(176, 217, 242, 0.85);
+  overflow-wrap: anywhere;
+}
+
+.campo__vista:empty {
+  display: none;
+}
+
+.campo__vista .malo {
+  color: var(--error-texto);
+  text-decoration: underline wavy rgba(245, 179, 188, 0.7);
+  text-underline-offset: 3px;
+}
+
+.campo__vista .tenue {
+  color: rgba(214, 237, 250, 0.45);
+}
+
+/* Mensajes de error */
+.campo__errores {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.campo__errores:empty {
+  display: none;
+}
+
+.campo__errores li {
+  position: relative;
+  padding-left: 1.55rem;
+  font-size: 0.93rem;
+  line-height: 1.45;
+  color: var(--error-texto);
+}
+
+.campo__errores li::before {
+  content: "!";
+  position: absolute;
+  left: 0;
+  top: 0.12em;
+  width: 1.05rem;
+  height: 1.05rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--error);
+  color: #2A0F16;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 400;
+}
+
+.seccion > .campo__errores {
+  margin-top: 1.1rem;
+}
+
+/* Botón del símbolo blanco B (fijo) */
+.boton-blanco {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  width: 100%;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--entrada-borde);
+  border-radius: 0.45rem;
+  background: var(--entrada-fondo);
+  color: var(--card-texto);
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.boton-blanco:hover {
+  border-color: var(--acento);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.boton-blanco:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: 3px;
+}
+
+.boton-blanco__simbolo {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  line-height: 1.35;
+}
+
+/* círculo con "+" (falta en Γ) o "✓" (ya está en Γ) */
+.boton-blanco__marca {
+  width: 1.35rem;
+  height: 1.35rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1;
+}
+
+.boton-blanco__marca::before {
+  content: "+";
+}
+
+.boton-blanco.en-gamma {
+  background: rgba(255, 255, 255, 0.93);
+  border-color: transparent;
+  color: var(--card-auto-1);
+}
+
+.boton-blanco.en-gamma .boton-blanco__marca::before {
+  content: "✓";
+}
+
+/* Campo con botón al lado (Γ) */
+.entrada-con-boton {
+  display: flex;
+  gap: 0.6rem;
+}
+
+/* ---------- Botones ---------- */
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1.3rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.boton svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.boton:focus-visible,
+.pestana:focus-visible,
+.trans__quitar:focus-visible,
+.matriz button:focus-visible,
+.resumen__lista button:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: 3px;
+}
+
+.boton--fantasma {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(217, 246, 255, 0.4);
+  color: var(--card-texto);
+}
+
+.boton--fantasma:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(217, 246, 255, 0.75);
+}
+
+.boton--primario {
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--card-auto-1);
+  box-shadow: 0 0.4rem 1rem rgba(1, 23, 44, 0.25);
+}
+
+.boton--primario:hover {
+  background: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 0 0.6rem 1.4rem rgba(1, 23, 44, 0.32);
+}
+
+.boton--mini {
+  padding: 0 1rem;
+  border-radius: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  letter-spacing: 0.04em;
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--entrada-borde);
+  color: var(--acento);
+}
+
+.boton--mini:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--acento);
+}
+
+.boton--guardar {
+  padding: 0.55rem 0.6rem 0.55rem 1.6rem;
+  font-size: 1.05rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.boton__flecha {
+  width: 2.4rem;
+  height: 2.4rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--card-auto-1);
+  color: #FFFFFF;
+  transition: transform 0.2s ease;
+}
+
+.boton--guardar:hover .boton__flecha {
+  transform: translateX(0.15rem);
+}
+
+/* ---------- Estado inicial y finales (píldoras) ---------- */
+.pildoras {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 2.9rem;
+  padding: 0.2rem;
+  margin: -0.2rem;
+  border-radius: 0.6rem;
+}
+
+.pildoras.invalida {
+  box-shadow: 0 0 0 1px var(--error);
+}
+
+.pildoras__vacio {
+  font-size: 0.95rem;
+  font-style: italic;
+  color: rgba(214, 237, 250, 0.55);
+}
+
+.pildora {
+  position: relative;
+  cursor: pointer;
+}
+
+.pildora input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.pildora span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem 0.5rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(217, 246, 255, 0.38);
+  background: rgba(255, 255, 255, 0.04);
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  color: var(--card-texto);
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+/* círculo del estado: simple para q0, doble para F (como en los diagramas) */
+.pildora span::before {
+  content: "";
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  opacity: 0.75;
+}
+
+.pildora--final span::before {
+  width: 0.55rem;
+  height: 0.55rem;
+  margin: 0 0.2rem;
+  outline: 1.5px solid currentColor;
+  outline-offset: 2px;
+}
+
+.pildora:hover span {
+  border-color: rgba(217, 246, 255, 0.7);
+}
+
+.pildora input:checked + span {
+  background: rgba(255, 255, 255, 0.93);
+  border-color: transparent;
+  color: var(--card-auto-1);
+}
+
+.pildora input:checked + span::before {
+  opacity: 1;
+  background: currentColor;
+}
+
+.pildora input:focus-visible + span {
+  outline: 2px solid var(--acento);
+  outline-offset: 2px;
+}
+
+/* ---------- Transiciones ---------- */
+.barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem 1.2rem;
+  margin-bottom: 1.3rem;
+}
+
+.barra__conteo {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: rgba(176, 217, 242, 0.85);
+}
+
+.nota {
+  margin: -0.4rem 0 1.2rem;
+  font-size: 0.95rem;
+  font-style: italic;
+  color: rgba(214, 237, 250, 0.7);
+}
+
+/* Pestañas Lista / Matriz */
+.pestanas {
+  display: inline-flex;
+  padding: 0.25rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(217, 246, 255, 0.25);
+}
+
+.pestana {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1.15rem;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  font-size: 0.82rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(230, 246, 254, 0.75);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.pestana svg {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pestana:hover {
+  color: #FFFFFF;
+}
+
+.pestana[aria-selected="true"] {
+  background: rgba(255, 255, 255, 0.93);
+  color: var(--card-auto-1);
+}
+
+/* Filas: δ( qi , X ) = ( qj , Y , D ) */
+.trans-cabeza,
+.trans {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) 2.5rem;
+  column-gap: 0.8rem;
+  align-items: center;
+}
+
+.trans-cabeza__formula,
+.trans__formula {
+  display: grid;
+  grid-template-columns:
+    1.9rem minmax(0, 1fr) 1rem minmax(0, 1fr) 1.2rem
+    1.6rem
+    1.2rem minmax(0, 1fr) 1rem minmax(0, 1fr) 1rem minmax(0, 1fr) 1.2rem;
+  align-items: center;
+}
+
+.trans__parte {
+  display: contents;
+}
+
+.trans-cabeza {
+  margin-bottom: 0.5rem;
+  padding: 0 0.4rem;
+}
+
+.trans-cabeza span {
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-align: center;
+  color: rgba(214, 237, 250, 0.7);
+}
+
+.trans-cabeza i {
+  font-family: var(--font-serif);
+  color: var(--acento);
+}
+
+.lista-trans {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.trans {
+  padding: 0.35rem 0.4rem;
+  border-radius: 0.55rem;
+  row-gap: 0.4rem;
+  transition: background-color 0.3s ease;
+}
+
+.trans:hover {
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.trans.resaltada {
+  animation: resaltar 1.6s ease;
+}
+
+@keyframes resaltar {
+  0%, 40% { background: rgba(176, 217, 242, 0.2); }
+  100% { background: transparent; }
+}
+
+.trans__num {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  text-align: center;
+  color: rgba(176, 217, 242, 0.65);
+}
+
+.trans.con-error .trans__num {
+  color: var(--error-texto);
+}
+
+.trans__op {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.3rem;
+  text-align: center;
+  color: var(--acento);
+  user-select: none;
+}
+
+.trans select.entrada {
+  padding: 0.55rem 1.6rem 0.55rem 0.65rem;
+  font-size: 0.98rem;
+  background-position: right 0.4rem center;
+}
+
+.trans__quitar {
+  width: 2.4rem;
+  height: 2.4rem;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  background: none;
+  color: rgba(214, 237, 250, 0.55);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.trans__quitar:hover {
+  color: var(--error-texto);
+  border-color: rgba(232, 130, 143, 0.5);
+  background: rgba(232, 130, 143, 0.1);
+}
+
+.trans__quitar svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.trans .campo__errores {
+  grid-column: 2 / 3;
+}
+
+.boton--agregar {
+  margin-top: 1.1rem;
+  margin-left: 2.8rem;
+}
+
+/* Matriz de transiciones */
+.matriz-marco {
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(217, 246, 255, 0.2);
+  background: rgba(0, 10, 25, 0.18);
+}
+
+.matriz {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+}
+
+.matriz th,
+.matriz td {
+  padding: 0;
+  text-align: center;
+  border-bottom: 1px solid rgba(217, 246, 255, 0.14);
+}
+
+.matriz tr:last-child th,
+.matriz tr:last-child td {
+  border-bottom: 0;
+}
+
+.matriz thead th {
+  padding: 0.7rem 0.8rem;
+  font-weight: 400;
+  color: var(--acento);
+  border-bottom: 1px solid rgba(217, 246, 255, 0.45);
+}
+
+.matriz thead th:first-child {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.15rem;
+}
+
+.matriz tbody th {
+  padding: 0.65rem 1rem;
+  font-weight: 400;
+  text-align: left;
+  white-space: nowrap;
+  color: var(--card-titulo);
+  border-right: 1px solid rgba(217, 246, 255, 0.45);
+}
+
+.matriz th:first-child {
+  border-right: 1px solid rgba(217, 246, 255, 0.45);
+}
+
+.matriz__marcas {
+  display: inline-block;
+  min-width: 1.6rem;
+  color: var(--acento);
+}
+
+.matriz td button {
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--card-texto);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.matriz td button:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.matriz td.vacia button {
+  color: rgba(214, 237, 250, 0.3);
+}
+
+.matriz td.vacia button .mas,
+.matriz td.vacia button:hover .guion {
+  display: none;
+}
+
+.matriz td.vacia button:hover .mas {
+  display: inline;
+  color: var(--acento);
+}
+
+.matriz td.conflicto button {
+  color: var(--error-texto);
+  background: rgba(232, 130, 143, 0.13);
+}
+
+.matriz__vacia {
+  padding: 1.4rem;
+  font-style: italic;
+  color: rgba(214, 237, 250, 0.65);
+}
+
+.matriz__leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.4rem;
+  margin-top: 0.9rem;
+  font-size: 0.85rem;
+  color: rgba(214, 237, 250, 0.68);
+}
+
+/* ---------- Palabra y cinta ---------- */
+.cinta-marco {
+  overflow-x: auto;
+  padding: 0 0.7rem 0.6rem;
+}
+
+.cinta-marco .cinta {
+  display: inline-block;
+  min-width: max-content;
+}
+
+.cinta-marco .cinta__celdas span.mala {
+  color: var(--error-texto);
+  background: rgba(232, 130, 143, 0.16);
+}
+
+.cinta-marco .cinta__celdas span.blanco {
+  color: rgba(214, 237, 250, 0.5);
+}
+
+/* ---------- Revisar y guardar ---------- */
+.tupla {
+  padding: 0.95rem 1.15rem;
+  border-radius: 0.45rem;
+  border-left: 2px solid var(--acento);
+  background: rgba(0, 10, 25, 0.22);
+  font-family: var(--font-mono);
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: var(--card-texto);
+  overflow-wrap: anywhere;
+}
+
+.tupla .tenue {
+  color: rgba(214, 237, 250, 0.42);
+}
+
+.resumen {
+  margin-top: 1.5rem;
+  padding: 1.1rem 1.3rem;
+  border-radius: 0.5rem;
+}
+
+.resumen--error {
+  background: rgba(58, 22, 32, 0.55);
+  border: 1px solid rgba(232, 130, 143, 0.45);
+}
+
+.resumen--exito {
+  background: rgba(10, 45, 40, 0.45);
+  border: 1px solid rgba(159, 227, 195, 0.45);
+}
+
+.resumen__titulo {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 1.05rem;
+  line-height: 1.4;
+}
+
+.resumen--error .resumen__titulo {
+  color: var(--error-texto);
+}
+
+.resumen--exito .resumen__titulo {
+  color: var(--ok);
+}
+
+.resumen__titulo svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.resumen__texto {
+  margin-top: 0.6rem;
+  padding-left: 2.2rem;
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: var(--card-texto);
+}
+
+.resumen__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 1rem;
+  padding-left: 2.2rem;
+}
+
+.resumen__lista {
+  list-style: none;
+  margin: 0.7rem 0 0;
+  padding: 0 0 0 2.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.resumen__lista button {
+  display: flex;
+  gap: 0.7rem;
+  width: 100%;
+  padding: 0.35rem 0.5rem;
+  margin-left: -0.5rem;
+  border: 0;
+  border-radius: 0.35rem;
+  background: none;
+  font-family: var(--font-serif);
+  font-size: 0.93rem;
+  line-height: 1.45;
+  text-align: left;
+  color: var(--card-texto);
+  cursor: pointer;
+}
+
+.resumen__lista button:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.resumen__seccion {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--error-texto);
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.8rem;
+}
+
+.acciones__secundarias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+/* ---------- Pie y avisos (igual que en automatico.css) ---------- */
+a.salir {
+  text-decoration: none;
+}
+
+.pantalla-config .pie {
+  margin-top: 3.6rem;
+}
+
+.aviso.error {
+  background: #3A1620;
+  color: #FBE4E7;
+  box-shadow: var(--sombra), inset 0.3rem 0 0 var(--error);
+}
+
+/* ---------- Ventanas angostas (tablet / celular) ---------- */
+@media (max-width: 860px) {
+  html {
+    font-size: 15px;
+  }
+
+  .pantalla-config {
+    padding-bottom: 9rem;
+  }
+
+  .pantalla-config .encabezado__sup {
+    font-size: 1rem;
+    letter-spacing: 0.22em;
+  }
+
+  .pantalla-config .encabezado__sup span:not(.linea) {
+    margin-right: -0.22em;
+  }
+
+  .pantalla-config .titulo {
+    font-size: clamp(2.1rem, 9vw, 3.4rem);
+  }
+
+  .lema--formal {
+    font-size: 0.95rem;
+    letter-spacing: 0.06em;
+  }
+
+  .pantalla-config .separador {
+    margin-top: 2.2rem;
+    gap: 0.9rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.18em;
+  }
+
+  .pantalla-config .separador span {
+    margin-right: -0.18em;
+  }
+
+  .pantalla-config .separador::before,
+  .pantalla-config .separador::after {
+    width: 1.5rem;
+  }
+
+  .seccion {
+    padding: 1.4rem 1.2rem 1.6rem;
+  }
+
+  .seccion__cabeza {
+    grid-template-columns: 2.8rem 1fr auto;
+    column-gap: 0.9rem;
+    align-items: start;
+  }
+
+  .seccion__num {
+    width: 2.8rem;
+    height: 2.8rem;
+    font-size: 0.85rem;
+  }
+
+  .seccion__titulo {
+    font-size: 1.02rem;
+    letter-spacing: 0.1em;
+  }
+
+  .seccion__ayuda {
+    font-size: 0.9rem;
+  }
+
+  .seccion__simbolo {
+    font-size: 1.6rem;
+  }
+
+  .rejilla--mitades,
+  .rejilla--palabra {
+    grid-template-columns: 1fr;
+  }
+
+
+  .acciones {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .acciones__secundarias {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .acciones__secundarias .boton {
+    padding: 0.7rem 0.8rem;
+    font-size: 0.9rem;
+    white-space: normal;
+  }
+
+  .boton--guardar {
+    justify-content: space-between;
+    padding-left: 1.2rem;
+    font-size: 0.9rem;
+    letter-spacing: 0.06em;
+  }
+
+  .resumen__texto,
+  .resumen__acciones,
+  .resumen__lista {
+    padding-left: 0;
+  }
+
+  .resumen__lista button {
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Cada transición en dos renglones:  δ(qi, X)  /  = (qj, Y, D) */
+  .trans-cabeza {
+    display: none;
+  }
+
+  .trans {
+    grid-template-columns: 1.5rem minmax(0, 1fr) 2.4rem;
+    column-gap: 0.5rem;
+    padding: 0.6rem 0.2rem;
+    border-bottom: 1px solid rgba(217, 246, 255, 0.12);
+    border-radius: 0;
+  }
+
+  .trans__formula {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.45rem;
+  }
+
+  .trans__parte {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .trans__parte select {
+    flex: 1;
+  }
+
+  .trans select.entrada {
+    padding: 0.5rem 1.35rem 0.5rem 0.5rem;
+    background-position: right 0.3rem center;
+    background-size: 0.85rem;
+  }
+
+  .trans__op {
+    font-size: 1.1rem;
+  }
+
+  .boton--agregar {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  /* en el celular la cinta inclinada se achica para no tapar el pie */
+  .deco--inf-izq {
+    width: 20rem;
+    height: 10.9rem;
+    opacity: 0.45;
+  }
+
+  .pantalla-config .encabezado__sup {
+    gap: 0.8rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.18em;
+  }
+
+  .pantalla-config .encabezado__sup span:not(.linea) {
+    margin-right: -0.18em;
+  }
+
+  .pantalla-config .encabezado__sup .linea {
+    width: 1.5rem;
+  }
+
+  .rejilla--alfabetos {
+    grid-template-columns: 1fr 6.5rem;
+    column-gap: 0.9rem;
+  }
+
+  .seccion__cabeza {
+    grid-template-columns: 2.8rem 1fr;
+  }
+
+  .seccion__simbolo {
+    display: none;
+  }
+
+  .boton--guardar {
+    font-size: 0.84rem;
+    letter-spacing: 0.03em;
+  }
+}
