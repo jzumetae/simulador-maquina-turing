@@ -3,13 +3,21 @@ SIMULADOR · MÁQUINA DE TURING — Proyecto final 2026
 
 CÓMO ABRIRLO
 ------------
-1. Doble clic en INICIAR.bat
+0. En línea: https://jzumetae.github.io/simulador-maquina-turing/
+
+1. Doble clic en "Simulador MT.exe" (el ejecutable)
+   Trae todas las páginas adentro: funciona solo, sin esta carpeta y sin internet.
+   Abre el navegador en el menú y una ventana pequeña; al cerrarla se detiene.
+   Si Windows muestra «Windows protegió su PC»: Más información → Ejecutar de todas formas.
+   Para volver a crearlo después de cambiar el código: herramientas\crear-ejecutable.bat
+
+2. Doble clic en INICIAR.bat
    Se abre una ventana negra (el servidor local) y el navegador en el menú:
    http://localhost:5577
    Deja la ventana negra abierta mientras usas el simulador; ciérrala para terminar.
    No hay que instalar nada: usa PowerShell, que ya viene con Windows.
 
-2. Alternativa con VS Code + Live Server
+3. Alternativa con VS Code + Live Server
    Abre ESTA carpeta en VS Code, clic derecho en index.html → "Open with Live Server".
    El puerto quedó en 5510 (.vscode/settings.json) porque en esta computadora
    Oracle (tnslsnr) ocupa 127.0.0.1:5500, el puerto normal de Live Server: por eso
@@ -32,6 +40,9 @@ modo2/                              Modo 2 · Ejecución manual (depuración / s
   Sandbox/                            Ejecución manual paso a paso
 ejemplos/                           Configuraciones .json de ejemplo para el Modo 1
 herramientas/servidor.ps1           Servidor local que usa INICIAR.bat
+herramientas/SimuladorMT.cs         Código del ejecutable (C#)
+herramientas/crear-ejecutable.bat   Crea "Simulador MT.exe" (compilador de C# de Windows)
+Simulador MT.exe                    Ejecutable para Windows con todo el simulador adentro
 _version-anterior/                  Archivos viejos que estaban en esta carpeta (se pueden borrar)
 
 
